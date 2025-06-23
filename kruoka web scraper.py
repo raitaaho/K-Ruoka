@@ -40,7 +40,7 @@ except TimeoutException:
     exit()
 counter = 0
 product_dict = {}
-while counter < number_of_stores:
+while counter < 5:
     wait = WebDriverWait(driver, 10)
     try:
         store_list_element = wait.until(EC.visibility_of_element_located((By.XPATH, "//ul[@data-component='store-list']")))
@@ -59,8 +59,8 @@ while counter < number_of_stores:
         products_element = wait.until(EC.visibility_of_element_located((By.XPATH, "//ul[@data-testid='product-search-results']")))
         last_height = driver.execute_script("return document.body.scrollHeight")
         while True:
-            driver.execute_script("window.scrollBy(0, 5000)")
-            time.sleep(2)
+            driver.execute_script("window.scrollBy(0, 6000)")
+            time.sleep(3)
             new_height = driver.execute_script("return document.body.scrollHeight")
             if new_height == last_height:
                 break
@@ -257,6 +257,7 @@ while counter < number_of_stores:
         try:
             wait = WebDriverWait(driver, 5)
             nutritional_content_header = wait.until(EC.element_to_be_clickable((By.XPATH, "//h2[text()='Ravintosisältö']")))
+            time.sleep(1)
             nutritional_content_header.click()
 
             keys_list = []

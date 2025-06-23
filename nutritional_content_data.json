@@ -11514,5 +11514,81 @@
         "Name": "Sausages Finland boere makkara n.500g pakaste",
         "Nutritional Value per": "100 g",
         "": ""
+    },
+    "2000101100003": {
+        "Name": "Naudan Entrecote pihvit",
+        "Nutritional Value per": "100 g",
+        "Energia": 188.0,
+        "Rasva": 12.0,
+        "josta tyydyttynytt\u00e4": 6.0,
+        "Hiilihydraatit": 0.0,
+        "josta sokereita": 0.0,
+        "Ravintokuitu": 0.0,
+        "Proteiini": 19.5,
+        "Suola": 0.1
+    },
+    "2358689600003": {
+        "Name": "Tamminen naudan ulkofileepala n1kg kalvoton",
+        "Nutritional Value per": "100 g",
+        "Energia": 123.0,
+        "Rasva": 4.1,
+        "josta tyydyttynytt\u00e4": 1.9,
+        "Hiilihydraatit": 0.0,
+        "josta sokereita": 0.0,
+        "Ravintokuitu": 0.0,
+        "Proteiini": 21.0,
+        "Suola": 0.1
+    },
+    "2000121000000": {
+        "Name": "Porsaan kasslerpihvit",
+        "Nutritional Value per": "100 g",
+        "Energia": 170.0,
+        "Rasva": 11.0,
+        "josta tyydyttynytt\u00e4": 1.3,
+        "Hiilihydraatit": 1.4,
+        "josta sokereita": 0.0,
+        "Ravintokuitu": 0.0,
+        "Proteiini": 21.0,
+        "Suola": 0.2
+    },
+    "6409100062057": {
+        "Name": "HK 800g Broilerlauantai",
+        "Nutritional Value per": "100 g",
+        "Energia": 184.0,
+        "Rasva": 12.0,
+        "josta tyydyttynytt\u00e4": 3.5,
+        "Hiilihydraatit": 7.8,
+        "josta sokereita": 2.0,
+        "Ravintokuitu": 0.0,
+        "Proteiini": 11.0,
+        "Suola": 1.9
+    },
+    "5705900013581": {
+        "Name": "Jensen Pulled Chicken 550 g",
+        "Nutritional Value per": "100 g",
+        "Energia": 130.0,
+        "Rasva": 2.0,
+        "Hiilihydraatit": 7.5,
+        "Proteiini": 22.0
+    },
+    "5705900013406": {
+        "Name": "Jensen's Pulled Pork 550 g",
+        "Nutritional Value per": "100 g",
+        "Energia": 163.6,
+        "Rasva": 7.4,
+        "josta tyydyttynytt\u00e4": 3.2,
+        "Hiilihydraatit": 9.7,
+        "Proteiini": 15.5
+    },
+    "6409100048600": {
+        "Name": "HK meetvursti 240g kevyt",
+        "Nutritional Value per": "100 g",
+        "Energia": 257.0,
+        "Rasva": 17.0,
+        "josta tyydyttynytt\u00e4": 6.8,
+        "Hiilihydraatit": 0.0,
+        "josta sokereita": 0.0,
+        "Proteiini": 26.0,
+        "Suola": 2.9
     }
 }
