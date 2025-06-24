@@ -168,7 +168,7 @@ while counter < number_of_stores:
                     ean_code = product.get_attribute("data-product-id")
                     url = product.find_element(By.XPATH, ".//a[@data-testid='product-link']").get_attribute("href")
                     try:
-                        unit_price_string = product.find_element(By.XPATH, "//div[@data-testid='product-unit-price']").text
+                        unit_price_string = product.find_element(By.XPATH, ".//div[@data-testid='product-unit-price']").text
                         backslash_index = unit_price_string.find("/")
                         if backslash_index != -1:
                             unit_type = unit_price_string[backslash_index+1:]
