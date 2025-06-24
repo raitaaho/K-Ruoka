@@ -15,11 +15,22 @@ from datetime import datetime
 import json
 import os
 
+product_categories = ['pakasteet',
+                      'liha-ja-kasviproteiinit',
+                      'kala-ja-merenelavat',
+                      'maito-juusto-munat-ja-rasvat/maitotuotteet',
+                      'maito-juusto-munat-ja-rasvat/rahkat-vanukkaat-ja-valipalat',
+                      'maito-juusto-munat-ja-rasvat/juustot-leivan-paalle',
+                      'kuivat-elintarvikkeet-ja-leivonta',
+                      'sailykkeet-keitot-ja-ateria-ainekset/sailykkeet',
+                      'kosmetiikka-terveys-ja-hygienia/terveysvalmisteet/urheiluvalmisteet'
+                      ]
 try:
     with open('nutritional_content_data.json', 'r') as file:
         nutritional_content_dict = json.load(file)
 except IOError:
     nutritional_content_dict = {}
+
 
 driver = uc.Chrome()
 driver.get("https://www.k-ruoka.fi/?kaupat&kauppahaku=Tampere")
@@ -40,7 +51,7 @@ except TimeoutException:
     exit()
 counter = 0
 product_dict = {}
-while counter < 5:
+while counter < number_of_stores:
     wait = WebDriverWait(driver, 10)
     try:
         store_list_element = wait.until(EC.visibility_of_element_located((By.XPATH, "//ul[@data-component='store-list']")))
@@ -50,132 +61,83 @@ while counter < 5:
         store.click()
         time.sleep(2)
         counter += 1
-        driver.get("https://www.k-ruoka.fi/kauppa/tuotehaku/liha-ja-kasviproteiinit")
     except TimeoutException:
         print("Store list element not found or not visible")
-        continue
-    wait = WebDriverWait(driver, 10)
-    try:
-        products_element = wait.until(EC.visibility_of_element_located((By.XPATH, "//ul[@data-testid='product-search-results']")))
-        last_height = driver.execute_script("return document.body.scrollHeight")
-        while True:
-            driver.execute_script("window.scrollBy(0, 6000)")
-            time.sleep(3)
-            new_height = driver.execute_script("return document.body.scrollHeight")
-            if new_height == last_height:
-                break
-            last_height = new_height
-    except TimeoutException:
-        print("Could not scroll to bottom of the page")
-    
-    driver.execute_script("window.scrollTo(0, 0)")
-    wait = WebDriverWait(driver, 10)
-    try:
-        products_element = wait.until(EC.visibility_of_element_located((By.XPATH, "//ul[@data-testid='product-search-results']")))
-        product_cards = driver.find_elements(By.XPATH, "//li[@data-testid='product-card']")
-        driver.execute_script("document.body.style.zoom='50%'")
-    except TimeoutException:
-        print("Product cards not found or not visible")
+        counter += 1
         continue
     product_urls = []
-    
-    for card in product_cards:
-        url_elements = card.find_elements(By.XPATH, ".//a[@data-testid='product-link']")
-        if len(url_elements) > 0:
-            try:
-                url = url_elements[0].get_attribute("href")
-                ean_code = card.get_attribute("data-product-id")
-            except Exception as e:
-                print("Could not get product url or EAN code for", card.text, e)
-                continue
-            try:
-                unit_price = card.find_element(By.XPATH, ".//div[@data-testid='product-unit-price']").text
-                backslash_index = unit_price.find("/")
-                if backslash_index != -1:
-                    unit_type = unit_price[backslash_index+1:]
-                    unit_price = unit_price[:backslash_index]
-                    unit_price = float(unit_price.replace(',', '.'))
-                else:
-                    unit_price = float(unit_price.replace(',', '.'))
-                    unit_type = 'Unknown'
-            except NoSuchElementException:
+    for category in product_categories:
+        driver.get(f"https://www.k-ruoka.fi/kauppa/tarjoushaku/{category}")
+        time.sleep(3)
+        wait = WebDriverWait(driver, 10)
+        try:
+            products_element = wait.until(EC.visibility_of_element_located((By.XPATH, "//ul[@data-testid='product-search-results']")))
+            last_height = driver.execute_script("return document.body.scrollHeight")
+            while True:
+                driver.execute_script("window.scrollBy(0, 5000)")
+                time.sleep(3)
+                new_height = driver.execute_script("return document.body.scrollHeight")
+                if new_height == last_height:
+                    break
+                last_height = new_height
+        except TimeoutException:
+            print("Could not scroll to bottom of the page")
+        
+        driver.execute_script("window.scrollTo(0, 0)")
+        time.sleep(2)
+        driver.execute_script("document.body.style.zoom='50%'")
+        wait = WebDriverWait(driver, 10)
+        try:
+            products_element = wait.until(EC.visibility_of_element_located((By.XPATH, "//ul[@data-testid='product-search-results']")))
+            product_cards = driver.find_elements(By.XPATH, "//li[@data-testid='product-card']")
+        except TimeoutException:
+            print("Product cards not found or not visible")
+            continue
+        
+        for card in product_cards:
+            url_elements = card.find_elements(By.XPATH, ".//a[@data-testid='product-link']")
+            if len(url_elements) > 0:
                 try:
-                    price_element_integer = card.find_element(By.XPATH, ".//div[starts-with(@class, 'ProductPrice__IntegerPart')]")
-                    unit_price_integer = price_element_integer.text
-            
-                    price_element_decimal = card.find_element(By.XPATH, ".//div[starts-with(@class, 'ProductPrice__DecimalPart')]")
-                    unit_price_decimal = price_element_decimal.text
-
-                    unit_element = card.find_element(By.XPATH, ".//div[starts-with(@class, 'ProductPrice__Extra')]")
-                    unit_type = unit_element.text.replace('/', '')
-                    
-                    unit_price = float(unit_price_integer + '.' + unit_price_decimal)
+                    url = url_elements[0].get_attribute("href")
+                    ean_code = card.get_attribute("data-product-id")
                 except Exception as e:
-                    print("Could not get product price for", ean_code, e)
-                    product_urls.append(url)
+                    print("Could not get product url or EAN code for", card.text, e)
                     continue
-            if product_dict.get(ean_code, "None") != "None":
-                if product_dict[ean_code]['Price per Unit'] > unit_price:
-                    product_dict[ean_code]['Price per Unit'] = unit_price
-                    product_dict[ean_code]['Store'] = store_name
-            else:
-                if nutritional_content_dict.get(ean_code, 'Unknown') != 'Unknown':
-                    product_dict[ean_code] = {}
-                    product_dict[ean_code]['Price per Unit'] = unit_price
-                    product_dict[ean_code]['Unit'] = unit_type
-                    product_dict[ean_code]['Store'] = store_name
-                    product_dict[ean_code].update(nutritional_content_dict[ean_code])
-                else:
-                    product_urls.append(url)
-        else:
-            driver.execute_script("arguments[0].scrollIntoView()", card)
-            wait = WebDriverWait(driver, 5)
-            try:
-                wait.until(EC.element_to_be_clickable((By.XPATH, ".//button[@aria-label='Näytä tuotteet']"))).click()
-            except TimeoutException:
-                print("Could not find 'Näytä tuotteet' button for", card.text)
-                continue
-            wait = WebDriverWait(driver, 5)
-            try:
-                products_list_element = wait.until(EC.visibility_of_element_located((By.XPATH, "//ul[@data-testid='offer-products']")))
-                product_elements = driver.find_elements(By.XPATH, "//ul[@data-testid='offer-products']//li[@data-testid='product-card']")
-            except TimeoutException:
-                print("Product elements not found or not visible for", card.text)
-                continue
-            for product in product_elements:
-                ean_code = product.get_attribute("data-product-id")
-                url = product.find_element(By.XPATH, ".//a[@data-testid='product-link']").get_attribute("href")
                 try:
-                    unit_price = product.find_element(By.XPATH, ".//div[@data-testid='product-unit-price']").text
-                    backslash_index = unit_price.find("/")
+                    unit_price_string = card.find_element(By.XPATH, ".//div[@data-testid='product-unit-price']").text
+                    backslash_index = unit_price_string.find("/")
                     if backslash_index != -1:
-                        unit_type = unit_price[backslash_index+1:]
-                        unit_price = unit_price[:backslash_index]
-                        unit_price = float(unit_price.replace(',', '.'))
+                        unit_type = unit_price_string[backslash_index+1:]
+                        unit_price = unit_price_string[:backslash_index]
+                        unit_price = float(unit_price.replace(',', '.')) if len(unit_price) > 0 else 999.999
                     else:
-                        unit_price = float(unit_price.replace(',', '.'))
+                        unit_price = float(unit_price_string.replace(',', '.')) if len(unit_price_string) > 0 else 999.999
                         unit_type = 'Unknown'
                 except NoSuchElementException:
                     try:
-                        price_element_integer = product.find_element(By.XPATH, ".//div[starts-with(@class, 'ProductPrice__IntegerPart')]")
+                        price_element_integer = card.find_element(By.XPATH, ".//div[starts-with(@class, 'ProductPrice__IntegerPart')]")
                         unit_price_integer = price_element_integer.text
                 
-                        price_element_decimal = product.find_element(By.XPATH, ".//div[starts-with(@class, 'ProductPrice__DecimalPart')]")
+                        price_element_decimal = card.find_element(By.XPATH, ".//div[starts-with(@class, 'ProductPrice__DecimalPart')]")
                         unit_price_decimal = price_element_decimal.text
 
-                        unit_element = product.find_element(By.XPATH, ".//div[starts-with(@class, 'ProductPrice__Extra')]")
+                        unit_element = card.find_element(By.XPATH, ".//div[starts-with(@class, 'ProductPrice__Extra')]")
                         unit_type = unit_element.text.replace('/', '')
-                
-                        unit_price = float(unit_price_integer + '.' + unit_price_decimal)
+                        
+                        unit_price = float(unit_price_integer + '.' + unit_price_decimal) if len(unit_price_integer) > 0 and len(unit_price_decimal) > 0 else 999.999
                     except Exception as e:
                         print("Could not get product price for", ean_code, e)
+                        product_urls.append(url)
                         continue
+                
                 if product_dict.get(ean_code, "None") != "None":
                     if product_dict[ean_code]['Price per Unit'] > unit_price:
-                        product_dict[ean_code]['Price per Unit'] =  unit_price
+                        product_dict[ean_code]['Price per Unit'] = unit_price
                         product_dict[ean_code]['Store'] = store_name
                 else:
                     if nutritional_content_dict.get(ean_code, 'Unknown') != 'Unknown':
+                        if nutritional_content_dict[ean_code].get('Vegan', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Proteiini', 'Unknown') == 'Unknown':
+                            product_urls.append(url)
                         product_dict[ean_code] = {}
                         product_dict[ean_code]['Price per Unit'] = unit_price
                         product_dict[ean_code]['Unit'] = unit_type
@@ -183,12 +145,79 @@ while counter < 5:
                         product_dict[ean_code].update(nutritional_content_dict[ean_code])
                     else:
                         product_urls.append(url)
-            driver.find_element(By.XPATH, "//button[@title='Sulje']").click()
+            else:
+                try:
+                    card.find_element(By.XPATH, ".//button[@aria-label='Näytä tuotteet']").click()
+                    time.sleep(2)
+                except Exception as e:
+                    driver.execute_script("arguments[0].scrollIntoView()", card)
+                    try:
+                        card.find_element(By.XPATH, ".//button[@aria-label='Näytä tuotteet']").click()
+                        time.sleep(2)
+                    except Exception as e:
+                        print("Could not click 'Näytä tuotteet' button for", card.text, e)
+                        continue
+                wait = WebDriverWait(driver, 5)
+                try:
+                    products_list_element = wait.until(EC.visibility_of_element_located((By.XPATH, "//ul[@data-testid='offer-products']")))
+                    product_elements = driver.find_elements(By.XPATH, "//ul[@data-testid='offer-products']//li[@data-testid='product-card']")
+                except TimeoutException:
+                    print("Product elements not found or not visible for", card.text)
+                    continue
+                for product in product_elements:
+                    ean_code = product.get_attribute("data-product-id")
+                    url = product.find_element(By.XPATH, ".//a[@data-testid='product-link']").get_attribute("href")
+                    try:
+                        unit_price_string = product.find_element(By.XPATH, "//div[@data-testid='product-unit-price']").text
+                        backslash_index = unit_price_string.find("/")
+                        if backslash_index != -1:
+                            unit_type = unit_price_string[backslash_index+1:]
+                            unit_price = unit_price_string[:backslash_index]
+                            unit_price = float(unit_price.replace(',', '.')) if len(unit_price) > 0 else 999.999
+                        else:
+                            unit_price = float(unit_price_string.replace(',', '.')) if len(unit_price_string) > 0 else 999.999
+                            unit_type = 'Unknown'
+                    except NoSuchElementException:
+                        try:
+                            price_element_integer = product.find_element(By.XPATH, ".//div[starts-with(@class, 'ProductPrice__IntegerPart')]")
+                            unit_price_integer = price_element_integer.text
+                    
+                            price_element_decimal = product.find_element(By.XPATH, ".//div[starts-with(@class, 'ProductPrice__DecimalPart')]")
+                            unit_price_decimal = price_element_decimal.text
+
+                            unit_element = product.find_element(By.XPATH, ".//div[starts-with(@class, 'ProductPrice__Extra')]")
+                            unit_type = unit_element.text.replace('/', '')
+                    
+                            unit_price = float(unit_price_integer + '.' + unit_price_decimal) if len(unit_price_integer) > 0 and len(unit_price_decimal) > 0 else 999.999
+                        except Exception as e:
+                            print("Could not get product price for", ean_code, e)
+                            product_urls.append(url)
+                            continue
+                    
+                    if product_dict.get(ean_code, "None") != "None":
+                        if product_dict[ean_code]['Price per Unit'] > unit_price:
+                            product_dict[ean_code]['Price per Unit'] =  unit_price
+                            product_dict[ean_code]['Store'] = store_name
+                    else:
+                        if nutritional_content_dict.get(ean_code, 'Unknown') != 'Unknown':
+                            if nutritional_content_dict[ean_code].get('Vegan', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Proteiini', 'Unknown') == 'Unknown':
+                                product_urls.append(url)
+                            product_dict[ean_code] = {}
+                            product_dict[ean_code]['Price per Unit'] = unit_price
+                            product_dict[ean_code]['Unit'] = unit_type
+                            product_dict[ean_code]['Store'] = store_name
+                            product_dict[ean_code].update(nutritional_content_dict[ean_code])
+                        else:
+                            product_urls.append(url)
+                    
+                driver.find_element(By.XPATH, "//button[@title='Sulje']").click()
+                time.sleep(1)
 
     product_urls = list(set(product_urls))  # Remove duplicates
     for product_url in product_urls:
         if product_url is not None:
             driver.get(product_url)
+            time.sleep(1)
         else:
             print("Could not open link")
             continue
@@ -196,21 +225,20 @@ while counter < 5:
             wait = WebDriverWait(driver, 5)
             header = wait.until(EC.visibility_of_element_located((By.XPATH, "//h1[@data-testid='product-name']")))
             product_name = header.text
-            driver.execute_script("document.body.style.zoom='50%'")
         except TimeoutException:
             print("Product name not found for", product_url)
             continue
         try:
             wait = WebDriverWait(driver, 5)
-            price_element = wait.until(EC.visibility_of_element_located((By.XPATH, "//h1[@data-testid='product-name']//div[@data-testid='product-unit-price']")))
-            unit_price = price_element.text
-            backslash_index = unit_price.find("/")
+            price_element = wait.until(EC.visibility_of_element_located((By.XPATH, "//h1[@data-testid='product-name']//following-sibling::div//div[@data-testid='product-unit-price']")))
+            unit_price_string = price_element.text
+            backslash_index = unit_price_string.find("/")
             if backslash_index != -1:
-                unit_type = unit_price[backslash_index+1:]
-                unit_price = unit_price[:backslash_index]
-                unit_price = float(unit_price.replace(',', '.'))
+                unit_type = unit_price_string[backslash_index+1:]
+                unit_price = unit_price_string[:backslash_index]
+                unit_price = float(unit_price.replace(',', '.')) if len(unit_price) > 0 else 999.999
             else:
-                unit_price = float(unit_price.replace(',', '.'))
+                unit_price = float(unit_price_string.replace(',', '.')) if len(unit_price_string) > 0 else 999.999
                 unit_type = 'Unknown'
         except TimeoutException:
             try:
@@ -223,7 +251,7 @@ while counter < 5:
                 unit_element = driver.find_element(By.XPATH, "//div[@data-testid='product-details-sidebar']//div[starts-with(@class, 'ProductPrice__Extra')]")
                 unit_type = unit_element.text.replace('/', '')
                 
-                unit_price = float(unit_price_integer + '.' + unit_price_decimal)
+                unit_price = float(unit_price_integer + '.' + unit_price_decimal) if len(unit_price_integer) > 0 and len(unit_price_decimal) > 0 else 999.999
             except Exception as e:
                 print("Could not get product price for", product_name, e)
                 continue
@@ -231,6 +259,7 @@ while counter < 5:
             wait = WebDriverWait(driver, 5)
             product_info_header = wait.until(EC.element_to_be_clickable((By.XPATH, "//h2[text()='Tuotetiedot']")))
             product_info_header.click()
+            time.sleep(1)
         except TimeoutException:
             print("Product info header not found for", product_name)
             continue
@@ -241,61 +270,85 @@ while counter < 5:
         except TimeoutException:
             print("EAN code not found for", product_name)
             continue
+        try:
+            attribute_elements = driver.find_elements(By.XPATH, "//div[starts-with(@class, 'NutritionalAttributeHighlights__Symbol')]")
+            vegan = 'No'
+            for attribute in attribute_elements:
+                if attribute.text == 'V':
+                    vegan = 'Yes'
+                    break
+        except Exception as e:
+            print("Could not find nutritional attributes for", product_name, e)
+            vegan = 'No'
         if product_dict.get(ean_code, 'Unknown') != 'Unknown':
             if product_dict[ean_code]['Price per Unit'] > unit_price:
                 product_dict[ean_code]['Price per Unit'] = unit_price
                 product_dict[ean_code]['Store'] = store_name
-            continue
+                product_dict[ean_code]['Vegan'] = vegan
+        else:
+            product_dict[ean_code] = {}
+            product_dict[ean_code]['Name'] = product_name
+            product_dict[ean_code]['Price per Unit'] = unit_price
+            product_dict[ean_code]['Unit'] = unit_type
+            product_dict[ean_code]['Store'] = store_name
+            product_dict[ean_code]['Vegan'] = vegan
+
         product_info_header.click()
-
-        product_dict[ean_code] = {}
-        product_dict[ean_code]['Name'] = product_name
-        product_dict[ean_code]['Price per Unit'] = unit_price
-        product_dict[ean_code]['Unit'] = unit_type
-        product_dict[ean_code]['Store'] = store_name
-         
-        try:
-            wait = WebDriverWait(driver, 5)
-            nutritional_content_header = wait.until(EC.element_to_be_clickable((By.XPATH, "//h2[text()='Ravintosisältö']")))
-            time.sleep(1)
-            nutritional_content_header.click()
-
-            keys_list = []
-            values_list = []
-
+        time.sleep(1)
+        
+        if nutritional_content_dict.get(ean_code, 'Unknown') != 'Unknown':
+            product_dict[ean_code].update(nutritional_content_dict[ean_code])
+            nutritional_content_dict[ean_code]['Vegan'] = vegan
+        else:
             try:
-                wait = WebDriverWait(driver, 5)
-                table = wait.until(EC.visibility_of_element_located((By.XPATH, "//h2[(text()='Ravintosisältö')]//parent::button//following::table[@class='NewNutritionalDetails__Table-sc-1sztb3r-4 eGGmNt']")))
-                unit_size = table.find_element(By.XPATH, ".//th[@class='NewNutritionalDetails__NutritionContentTableColumnHeading-sc-1sztb3r-7 gACOYE']//div").text
-                product_dict[ean_code]['Nutritional Value per'] = unit_size
-                keys = table.find_elements(By.XPATH, ".//*[self::th[@class!='NewNutritionalDetails__NutritionContentTableColumnHeading-sc-1sztb3r-7 gACOYE']]")
-                values = table.find_elements(By.XPATH, ".//*[self::td[@class!='NewNutritionalDetails__NutritionContentTableColumnHeading-sc-1sztb3r-7 gACOYE']]")
-                for key in keys:
-                    tokens = key.text.split('\n')
-                    for token in tokens:
-                        keys_list.append(token)
-                for value in values:
-                    tokens = value.text.split('\n')
-                    for token in tokens:
-                        kcal_index = token.find("kcal")
-                        backslash_index = token.find("/")
-                        if kcal_index != -1:
-                            value_string = token[backslash_index+1:kcal_index].replace(',', '.').strip()
-                            values_list.append(value_string)
-                        else:
-                            value_string = token.replace(',', '.').replace('g', '').replace('kJ', '').strip()
-                            values_list.append(value_string)
-                kv_pairs = dict(zip(keys_list, values_list))
-                product_dict[ean_code].update(kv_pairs)
-                if nutritional_content_dict.get(ean_code, 'Unknown') == 'Unknown':
-                    nutritional_content_dict[ean_code] = {}
-                    nutritional_content_dict[ean_code]['Name'] = product_name
-                    nutritional_content_dict[ean_code]['Nutritional Value per'] = unit_size
-                    nutritional_content_dict[ean_code].update(kv_pairs)
+                wait = WebDriverWait(driver, 2)
+                nutritional_content_header = wait.until(EC.element_to_be_clickable((By.XPATH, "//h2[text()='Ravintosisältö']")))
+                nutritional_content_header.click()
+                time.sleep(2)
+
+                keys_list = []
+                values_list = []
+
+                try:
+                    wait = WebDriverWait(driver, 5)
+                    table = wait.until(EC.visibility_of_element_located((By.XPATH, "//h2[(text()='Ravintosisältö')]//parent::button//following::table[starts-with(@class, 'NewNutritionalDetails__Table')]")))
+                    unit_size = table.find_element(By.XPATH, ".//th[starts-with(@class, 'NewNutritionalDetails__NutritionContentTableColumnHeading')]//div").text
+                    product_dict[ean_code]['Nutritional Value per'] = unit_size
+                    keys = table.find_elements(By.XPATH, "//th[starts-with(@class, 'NewNutritionalDetails__NutritionContentTableRowHeading')]")
+                    values = table.find_elements(By.XPATH, "//td[starts-with(@class, 'NewNutritionalDetails__NutritionContentTableCell')][1]")
+                    for key in keys:
+                        tokens = key.text.split('\n')
+                        for token in tokens:
+                            keys_list.append(token)
+                    for value in values:
+                        tokens = value.text.split('\n')
+                        for token in tokens:
+                            kcal_index = token.find("kcal")
+                            backslash_index = token.find("/")
+                            if kcal_index != -1:
+                                value_string = token[backslash_index+1:kcal_index].replace(',', '.').strip()
+                                values_list.append(value_string)
+                            else:
+                                value_string = token.replace(',', '.').replace('g', '').replace('kJ', '').strip()
+                                values_list.append(value_string)
+                    kv_pairs = dict(zip(keys_list, values_list))
+                    product_dict[ean_code].update(kv_pairs)
+                    if nutritional_content_dict.get(ean_code, 'Unknown') == 'Unknown':
+                        if product_dict[ean_code].get('Proteiini', 'Unknown') != 'Unknown':
+                            nutritional_content_dict[ean_code] = {}
+                            nutritional_content_dict[ean_code]['Name'] = product_name
+                            nutritional_content_dict[ean_code]['Nutritional Value per'] = unit_size
+                            nutritional_content_dict[ean_code].update(kv_pairs)
+                            nutritional_content_dict[ean_code]['Vegan'] = vegan
+                    else:
+                        nutritional_content_dict[ean_code].update(kv_pairs)
+                        nutritional_content_dict[ean_code]['Vegan'] = vegan
+                except TimeoutException:
+                    print("Nutritional information not found for", product_name)
+                    continue
             except TimeoutException:
-                print("Nutritional information not found for", product_name)
-        except TimeoutException:
-            print("Nutritional content header not found for", product_name)
+                print("Nutritional content header not found for", product_name)
+                continue
     driver.get("https://www.k-ruoka.fi/?kaupat&kauppahaku=Tampere")
 
 # Serializing json
