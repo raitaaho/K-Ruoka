@@ -30,36 +30,39 @@ liter_pattern = re.compile(r'(\d+(?:[.,]\d+)?)\s*l')
 def extract_size_in_g(size_string):
     string = size_string.replace(',', '.')
 
-    if milligram_match := milligram_pattern.search(string):
-        return float(milligram_match.group(1)) / 1000
-    if gram_match := gram_pattern.search(string):
-        return float(gram_match.group(1)) 
-    if kilogram_match := kilogram_pattern.search(string):
-        return float(kilogram_match.group(1)) * 1000
-    if deciliter_match := deciliter_pattern.search(string):
-        return float(deciliter_match.group(1)) * 100
-    if milliliter_match := milliliter_pattern.search(string):
-        return float(milliliter_match.group(1)) 
-    if liter_match := liter_pattern.search(string):
-        return float(liter_match.group(1)) * 1000
+    for pattern, multiplier in [
+        (milligram_pattern, float(1/1000)),
+        (gram_pattern, 1),
+        (kilogram_pattern, 1000),
+        (deciliter_pattern, 100),
+        (milliliter_pattern, 1),
+        (liter_pattern, 1000),
+    ]:
+        matches = pattern.findall(string)
+        if len(matches) >= 2:
+            return float(matches[1]) * multiplier
+        elif len(matches) == 1:
+            return float(matches[0]) * multiplier
 
     return None
 
-def extract_size_in_kg(product_name):
-    product_description = product_name.replace(',', '.')
 
-    if milligram_match := milligram_pattern.search(product_description):
-        return float(milligram_match.group(1)) / 1000000
-    if gram_match := gram_pattern.search(product_description):
-        return float(gram_match.group(1)) / 1000
-    if kilogram_match := kilogram_pattern.search(product_description):
-        return float(kilogram_match.group(1))
-    if deciliter_match := deciliter_pattern.search(product_description):
-        return float(deciliter_match.group(1)) / 10
-    if milliliter_match := milliliter_pattern.search(product_description):
-        return float(milliliter_match.group(1)) / 1000
-    if liter_match := liter_pattern.search(product_description):
-        return float(liter_match.group(1))
+def extract_size_in_kg(size_string):
+    string = size_string.replace(',', '.')
+
+    for pattern, multiplier in [
+        (milligram_pattern, float(1/1000000)),
+        (gram_pattern, float(1/1000)),
+        (kilogram_pattern, 1),
+        (deciliter_pattern, float(1/10)),
+        (milliliter_pattern, float(1/1000)),
+        (liter_pattern, 1),
+    ]:
+        matches = pattern.findall(string)
+        if len(matches) >= 2:
+            return float(matches[1]) * multiplier
+        elif len(matches) == 1:
+            return float(matches[0]) * multiplier
 
     return None
 
@@ -83,16 +86,26 @@ def extract_portion_size(nutritional_header_string):
 
 product_categories = ['pakasteet/liha--kala--ja-kasvispakasteet',
                       'pakasteet/pakasteateriat',
+                      'pakasteet/pizzat-ja-pizzapohjat',
                       'liha-ja-kasviproteiinit',
                       'kala-ja-merenelavat',
-                      'valmisruoka',
-                      'maito-juusto-munat-ja-rasvat/maitotuotteet',
+                      'valmisruoka/valmisruoat-ja--keitot',
+                      'valmisruoka/laatikot-pastat-ja-lasagnet',
+                      'valmisruoka/pyorykat-pihvit-ja-ohukaiset',
+                      'maito-juusto-munat-ja-rasvat/maitotuotteet/rahkat',
+                      'maito-juusto-munat-ja-rasvat/jogurtit',
+                      'maito-juusto-munat-ja-rasvat/munat',
                       'maito-juusto-munat-ja-rasvat/rahkat-vanukkaat-ja-valipalat',
                       'maito-juusto-munat-ja-rasvat/juustot-leivan-paalle',
-                      'kuivat-elintarvikkeet-ja-leivonta/siemenet-pahkinat-ja-kuivatut-hedelmat',
+                      'kuivat-elintarvikkeet-ja-leivonta/leseet-rouheet-alkiot-soijavalmisteet-ja-muut-viljatuotteet/leseet-rouheet-alkiot-soijavalmisteet-ja-viljajyvat',
+                      'kuivat-elintarvikkeet-ja-leivonta/siemenet-pahkinat-ja-kuivatut-hedelmat/pahkinat',
+                      'kuivat-elintarvikkeet-ja-leivonta/siemenet-pahkinat-ja-kuivatut-hedelmat/siemenet',
                       'kuivat-elintarvikkeet-ja-leivonta/kuivatut-herneet-pavut-ja-linssit',
+                      'sailykkeet-keitot-ja-ateria-ainekset/sailykkeet/vihannessailykkeet',
+                      'sailykkeet-keitot-ja-ateria-ainekset/sailykkeet/valmisruokasailykkeet',
                       'sailykkeet-keitot-ja-ateria-ainekset/sailykkeet/kala--ja-ayriaissailykkeet',
-                      'sailykkeet-keitot-ja-ateria-ainekset/sailykkeet/liha--ja-riistasailykkeet'
+                      'sailykkeet-keitot-ja-ateria-ainekset/sailykkeet/liha--ja-riistasailykkeet',
+                      'kosmetiikka-terveys-ja-hygienia/terveysvalmisteet/urheiluvalmisteet'
                       ]
 
 store_locations = ['Tampere', 'Pirkkala', 'Lempäälä', 'Nokia']
@@ -175,33 +188,30 @@ while counter < number_of_stores:
 
     product_urls = []
     for category in product_categories:
-        driver.get(f"https://www.k-ruoka.fi/kauppa/tarjoushaku/{category}")
+        driver.get(f"https://www.k-ruoka.fi/kauppa/tuotehaku/{category}")
         time.sleep(1)
-
+        
         wait = WebDriverWait(driver, 3)
         try:
-            products_element = wait.until(EC.visibility_of_element_located((By.XPATH, "//ul[@data-testid='product-search-results']")))
-            last_height = driver.execute_script("return document.body.scrollHeight")
+            products_list = wait.until(EC.visibility_of_element_located((By.XPATH, "//ul[@data-testid='product-search-results']")))
+            product_cards = products_list.find_elements(By.XPATH, ".//li[@data-testid='product-card']")
+            last_list_len = len(product_cards)
             while True:
-                driver.execute_script("window.scrollBy(0, 5000)")
+                driver.execute_script("arguments[0].scrollIntoView()", product_cards[-1])
                 time.sleep(3)
-                new_height = driver.execute_script("return document.body.scrollHeight")
-                if new_height == last_height:
+                product_cards = driver.find_elements(By.XPATH, "//ul[@data-testid='product-search-results']//li[@data-testid='product-card']")
+                new_list_len = len(product_cards)
+                if new_list_len == last_list_len:
                     break
-                last_height = new_height
+                last_list_len = new_list_len
         except TimeoutException:
             print("No products found in", store_name, "for category", category)
             continue
-
-        driver.execute_script("window.scrollTo(0, 0)")
-        time.sleep(2)
-        driver.execute_script("document.body.style.zoom='50%'")
-        time.sleep(1)
-
+        
         wait = WebDriverWait(driver, 3)
         try:
             products_element = wait.until(EC.visibility_of_element_located((By.XPATH, "//ul[@data-testid='product-search-results']")))
-            product_cards = driver.find_elements(By.XPATH, "//li[@data-testid='product-card']")
+            product_cards = products_element.find_elements(By.XPATH, ".//li[@data-testid='product-card']")
         except TimeoutException:
             print("No products found in", store_name, "for category", category, "after scrolling")
             continue
@@ -213,7 +223,15 @@ while counter < number_of_stores:
                     url = url_elements[0].get_attribute("href")
                     product_name = url_elements[0].text
                     size = extract_size_in_kg(product_name)
-                    ean_code = card.get_attribute("data-product-id")
+                    ean_code_string = card.get_attribute("data-product-id")
+                    if ean_code_string != None:
+                        hyphen_index = ean_code_string.find("-")
+                    else:
+                        print("EAN code is an empty string for", product_name)
+                        product_urls.append(url)
+                        continue
+                    ean_code = ean_code_string[:hyphen_index] if hyphen_index != -1 else ean_code_string
+                    
                 except Exception as e:
                     print("Could not get product url or EAN code for", card.text, e)
                     continue
@@ -222,17 +240,15 @@ while counter < number_of_stores:
                     if nutritional_content_dict[ean_code].get('Vegan', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Lactose Free', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Gluten Free', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Sydänmerkki', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Hyvää Suomesta', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Organic', 'Unknown') == 'Unknown':
                         product_urls.append(url)
                         if product_dict.get(ean_code, "None") != "None":
-                            product_dict[ean_code]['Size'] = size
+                            product_dict[ean_code]['Size (kg)'] = size
                             product_dict[ean_code]['Store'] = store_name
                             product_dict[ean_code]['Category'] = category
-                            product_dict[ean_code].update(nutritional_content_dict[ean_code])
 
                         else:
                             product_dict[ean_code] = {}
-                            product_dict[ean_code]['Size'] = size
+                            product_dict[ean_code]['Size (kg)'] = size
                             product_dict[ean_code]['Store'] = store_name
                             product_dict[ean_code]['Category'] = category
-                            product_dict[ean_code].update(nutritional_content_dict[ean_code])
                     else:
                         try:
                             unit_price_string = card.find_element(By.XPATH, ".//div[@data-testid='product-unit-price']").text
@@ -242,10 +258,15 @@ while counter < number_of_stores:
                                 unit_price = unit_price_string[:backslash_index]
                                 unit_price = float(unit_price.replace(',', '.')) if len(unit_price) != 0 else 999.999
                             else:
-                                unit_price = float(unit_price_string.replace(',', '.')) if len(unit_price_string) != 0 else 999.999
-                                unit_type = 'Unknown'
+                                search_res = re.search(r'(\d+(?:[.,]\d+)?)', unit_price_string)
+                                unit_price = float(search_res.group().replace(',', '.')) if search_res else 999.999
+                                unit_type = 'kg' if 'kg' in unit_price_string else 'Unknown'
 
-                        except NoSuchElementException:
+                            # Check if unit_price is suspiciously low
+                            if unit_price <= 0.2:
+                                raise ValueError("Unit price seems too low, fallback to alternative method")
+
+                        except (NoSuchElementException, ValueError):
                             try:
                                 price_element_integer = card.find_element(By.XPATH, ".//div[starts-with(@class, 'ProductPrice__IntegerPart')]")
                                 unit_price_integer = price_element_integer.text
@@ -260,20 +281,23 @@ while counter < number_of_stores:
 
                             except Exception as e:
                                 print("Could not get product price for", product_name, e)
-                                continue
+                                unit_price = 999.999
+                                unit_type = 'Unknown'
+                                product_urls.append(url)
 
                         if product_dict.get(ean_code, "None") != "None":
                             if product_dict[ean_code].get('Price per Unit', 'Unknown') != 'Unknown':
                                 if product_dict[ean_code]['Price per Unit'] > unit_price:
                                     product_dict[ean_code]['Price per Unit'] = unit_price
                                     product_dict[ean_code]['Unit'] = unit_type
-                                    product_dict[ean_code]['Size'] = size
+                                    product_dict[ean_code]['Size (kg)'] = size
                                     product_dict[ean_code]['Store'] = store_name
                                     product_dict[ean_code]['Category'] = category
 
                             else:
-                                product_urls.append(url)
-                                product_dict[ean_code]['Size'] = size
+                                product_dict[ean_code]['Price per Unit'] = unit_price
+                                product_dict[ean_code]['Unit'] = unit_type
+                                product_dict[ean_code]['Size (kg)'] = size
                                 product_dict[ean_code]['Store'] = store_name
                                 product_dict[ean_code]['Category'] = category
 
@@ -281,17 +305,17 @@ while counter < number_of_stores:
                             product_dict[ean_code] = {}
                             product_dict[ean_code]['Price per Unit'] = unit_price
                             product_dict[ean_code]['Unit'] = unit_type
-                            product_dict[ean_code]['Size'] = size
+                            product_dict[ean_code]['Size (kg)'] = size
                             product_dict[ean_code]['Store'] = store_name
                             product_dict[ean_code]['Category'] = category
 
-                        product_dict[ean_code].update(nutritional_content_dict[ean_code])
+                    product_dict[ean_code].update(nutritional_content_dict[ean_code])
 
                 else:
                     product_urls.append(url)
                     product_dict[ean_code] = {}
                     product_dict[ean_code]['Name'] = product_name
-                    product_dict[ean_code]['Size'] = size
+                    product_dict[ean_code]['Size (kg)'] = size
                     product_dict[ean_code]['Store'] = store_name
                     product_dict[ean_code]['Category'] = category
 
@@ -299,22 +323,24 @@ while counter < number_of_stores:
                 try:
                     nayta_tuotteet_button = card.find_element(By.XPATH, ".//button[@aria-label='Näytä tuotteet']")
                     nayta_tuotteet_button.click()
-                    time.sleep(1)
                 except Exception as e:
+                    print(e)
                     try:
                         nayta_tuotteet_button = card.find_element(By.XPATH, ".//button[@aria-label='Näytä tuotteet']")
                         driver.execute_script("arguments[0].scrollIntoView()", nayta_tuotteet_button)
                         time.sleep(2)
                         nayta_tuotteet_button.click()
-                        time.sleep(1)
                     except Exception as e:
                         try:
+                            time.sleep(3)
                             driver.find_element(By.XPATH, "//button[@title='Sulje']").click()
-                            time.sleep(2)
+                            time.sleep(3)
 
                             nayta_tuotteet_button = card.find_element(By.XPATH, ".//button[@aria-label='Näytä tuotteet']")
+                            driver.execute_script("arguments[0].scrollIntoView()", nayta_tuotteet_button)
+                            time.sleep(3)
                             nayta_tuotteet_button.click()
-                            time.sleep(1)
+                            
                         except Exception as e:
                             print("Could not click 'Näytä tuotteet' button for", card.text, e)
                             continue
@@ -329,10 +355,18 @@ while counter < number_of_stores:
 
                 for product in product_elements:
                     try:
-                        ean_code = product.get_attribute("data-product-id")
                         url = product.find_element(By.XPATH, ".//a[@data-testid='product-link']").get_attribute("href")
                         product_name = product.find_element(By.XPATH, ".//a[@data-testid='product-link']").text
                         size = extract_size_in_kg(product_name)
+                        ean_code_string = product.get_attribute("data-product-id")
+                        if ean_code_string != None:
+                            hyphen_index = ean_code_string.find("-")
+                        else:
+                            print("EAN code is an empty string for", product_name)
+                            product_urls.append(url)
+                            continue
+                        ean_code = ean_code_string[:hyphen_index] if hyphen_index != -1 else ean_code_string
+
                     except Exception as e:
                         print("Could not get product url or EAN code for", product.text, e)
                         continue
@@ -341,17 +375,15 @@ while counter < number_of_stores:
                         if nutritional_content_dict[ean_code].get('Vegan', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Lactose Free', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Gluten Free', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Sydänmerkki', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Hyvää Suomesta', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Organic', 'Unknown') == 'Unknown':
                             product_urls.append(url)
                             if product_dict.get(ean_code, "None") != "None":
-                                product_dict[ean_code]['Size'] = size
+                                product_dict[ean_code]['Size (kg)'] = size
                                 product_dict[ean_code]['Store'] = store_name
                                 product_dict[ean_code]['Category'] = category
-                                product_dict[ean_code].update(nutritional_content_dict[ean_code])
 
                             else:
                                 product_dict[ean_code] = {}
-                                product_dict[ean_code]['Size'] = size
+                                product_dict[ean_code]['Size (kg)'] = size
                                 product_dict[ean_code]['Store'] = store_name
                                 product_dict[ean_code]['Category'] = category
-                                product_dict[ean_code].update(nutritional_content_dict[ean_code])
                         else:
                             try:
                                 unit_price_string = product.find_element(By.XPATH, ".//div[@data-testid='product-unit-price']").text
@@ -361,10 +393,15 @@ while counter < number_of_stores:
                                     unit_price = unit_price_string[:backslash_index]
                                     unit_price = float(unit_price.replace(',', '.')) if len(unit_price) != 0 else 999.999
                                 else:
-                                    unit_price = float(unit_price_string.replace(',', '.')) if len(unit_price_string) != 0 else 999.999
-                                    unit_type = 'Unknown'
+                                    search_res = re.search(r'(\d+(?:[.,]\d+)?)', unit_price_string)
+                                    unit_price = float(search_res.group().replace(',', '.')) if search_res else 999.999
+                                    unit_type = 'kg' if 'kg' in unit_price_string else 'Unknown'
 
-                            except NoSuchElementException:
+                                # Check if unit_price is suspiciously low
+                                if unit_price <= 0.2:
+                                    raise ValueError("Unit price seems too low, fallback to alternative method")
+
+                            except (NoSuchElementException, ValueError):
                                 try:
                                     price_element_integer = product.find_element(By.XPATH, ".//div[starts-with(@class, 'ProductPrice__IntegerPart')]")
                                     unit_price_integer = price_element_integer.text
@@ -378,18 +415,24 @@ while counter < number_of_stores:
                                     unit_price = float(unit_price_integer + '.' + unit_price_decimal) if len(unit_price_integer) > 0 and len(unit_price_decimal) > 0 else 999.999
 
                                 except Exception as e:
-                                    print("Could not get product price for", product_name, e)
-                                    continue
+                                    print("Could not get product price for", ean_code, product_name, e)
+                                    unit_price = 999.999
+                                    unit_type = 'Unknown'
+                                    product_urls.append(url)
 
                             if product_dict.get(ean_code, "None") != "None":
                                 if product_dict[ean_code].get('Price per Unit', 'Unknown') != 'Unknown':
                                     if product_dict[ean_code]['Price per Unit'] > unit_price:
                                         product_dict[ean_code]['Price per Unit'] = unit_price
                                         product_dict[ean_code]['Unit'] = unit_type
+                                        product_dict[ean_code]['Size (kg)'] = size
+                                        product_dict[ean_code]['Store'] = store_name
+                                        product_dict[ean_code]['Category'] = category
 
                                 else:
-                                    product_urls.append(url)
-                                    product_dict[ean_code]['Size'] = size
+                                    product_dict[ean_code]['Price per Unit'] = unit_price
+                                    product_dict[ean_code]['Unit'] = unit_type
+                                    product_dict[ean_code]['Size (kg)'] = size
                                     product_dict[ean_code]['Store'] = store_name
                                     product_dict[ean_code]['Category'] = category
 
@@ -397,7 +440,7 @@ while counter < number_of_stores:
                                 product_dict[ean_code] = {}
                                 product_dict[ean_code]['Price per Unit'] = unit_price
                                 product_dict[ean_code]['Unit'] = unit_type
-                                product_dict[ean_code]['Size'] = size
+                                product_dict[ean_code]['Size (kg)'] = size
                                 product_dict[ean_code]['Store'] = store_name
                                 product_dict[ean_code]['Category'] = category
 
@@ -407,7 +450,7 @@ while counter < number_of_stores:
                         product_urls.append(url)
                         product_dict[ean_code] = {}
                         product_dict[ean_code]['Name'] = product_name
-                        product_dict[ean_code]['Size'] = size
+                        product_dict[ean_code]['Size (kg)'] = size
                         product_dict[ean_code]['Store'] = store_name
                         product_dict[ean_code]['Category'] = category
                         
@@ -493,10 +536,15 @@ while counter < number_of_stores:
                 unit_price = unit_price_string[:backslash_index]
                 unit_price = float(unit_price.replace(',', '.')) if len(unit_price) > 0 else 999.999
             else:
-                unit_price = float(unit_price_string.replace(',', '.')) if len(unit_price_string) > 0 else 999.999
-                unit_type = 'Unknown'
+                search_res = re.search(r'(\d+(?:[.,]\d+)?)', unit_price_string)
+                unit_price = float(search_res.group().replace(',', '.')) if search_res else 999.999
+                unit_type = 'kg' if 'kg' in unit_price_string else 'Unknown'
+            
+            # Check if unit_price is suspiciously low
+            if unit_price <= 0.1:
+                raise ValueError("Unit price seems too low, fallback to alternative method")
 
-        except TimeoutException:
+        except (TimeoutException, ValueError):
             try:
                 price_element_integer = driver.find_element(By.XPATH, "//div[@data-testid='product-details-sidebar']//div[starts-with(@class, 'ProductPrice__IntegerPart')]")
                 unit_price_integer = price_element_integer.text
@@ -515,13 +563,13 @@ while counter < number_of_stores:
                 if product_dict[ean_code]['Price per Unit'] > unit_price:
                     product_dict[ean_code]['Price per Unit'] = unit_price
                     product_dict[ean_code]['Unit'] = unit_type
-                    product_dict[ean_code]['Size'] = size
+                    product_dict[ean_code]['Size (kg)'] = size
                     product_dict[ean_code]['Store'] = store_name
 
             else:
                 product_dict[ean_code]['Price per Unit'] = unit_price
                 product_dict[ean_code]['Unit'] = unit_type
-                product_dict[ean_code]['Size'] = size
+                product_dict[ean_code]['Size (kg)'] = size
                 product_dict[ean_code]['Store'] = store_name
 
         else:
@@ -529,7 +577,7 @@ while counter < number_of_stores:
             product_dict[ean_code]['Name'] = product_name
             product_dict[ean_code]['Price per Unit'] = unit_price
             product_dict[ean_code]['Unit'] = unit_type
-            product_dict[ean_code]['Size'] = size
+            product_dict[ean_code]['Size (kg)'] = size
             product_dict[ean_code]['Store'] = store_name
 
         if nutritional_content_dict.get(ean_code, 'Unknown') != 'Unknown':
@@ -621,6 +669,18 @@ while counter < number_of_stores:
                         product_dict[ean_code].update(nutritional_content_dict[ean_code])
                         continue
 
+                nutritional_content_dict[ean_code] = {}
+                nutritional_content_dict[ean_code]['Name'] = product_name
+                nutritional_content_dict[ean_code]['Nutritional Value per'] = unit_size
+                nutritional_content_dict[ean_code].update(kv_pairs)
+                nutritional_content_dict[ean_code]['Vegan'] = vegan
+                nutritional_content_dict[ean_code]['Gluten Free'] = gluten_free
+                nutritional_content_dict[ean_code]['Lactose Free'] = lactose_free
+                nutritional_content_dict[ean_code]['Organic'] = luomu
+                nutritional_content_dict[ean_code]['Sydänmerkki'] = sydanmerkki
+                nutritional_content_dict[ean_code]['Hyvää Suomesta'] = hyvaa_suomesta
+                product_dict[ean_code].update(nutritional_content_dict[ean_code])
+
             except TimeoutException:
                 print("Nutritional content header not found for", product_name)
                 nutritional_content_dict[ean_code] = {}
@@ -633,18 +693,6 @@ while counter < number_of_stores:
                 nutritional_content_dict[ean_code]['Hyvää Suomesta'] = hyvaa_suomesta
                 product_dict[ean_code].update(nutritional_content_dict[ean_code])
                 continue
-
-            nutritional_content_dict[ean_code] = {}
-            nutritional_content_dict[ean_code]['Name'] = product_name
-            nutritional_content_dict[ean_code]['Nutritional Value per'] = unit_size
-            nutritional_content_dict[ean_code].update(kv_pairs)
-            nutritional_content_dict[ean_code]['Vegan'] = vegan
-            nutritional_content_dict[ean_code]['Gluten Free'] = gluten_free
-            nutritional_content_dict[ean_code]['Lactose Free'] = lactose_free
-            nutritional_content_dict[ean_code]['Organic'] = luomu
-            nutritional_content_dict[ean_code]['Sydänmerkki'] = sydanmerkki
-            nutritional_content_dict[ean_code]['Hyvää Suomesta'] = hyvaa_suomesta
-            product_dict[ean_code].update(nutritional_content_dict[ean_code])
 
     try:
         # Serializing json
@@ -667,20 +715,23 @@ for products, product_data in product_dict.items():
     portion_size_in_grams = extract_size_in_g(portion_size_string)
 
     if portion_size_in_grams != 0 and portion_size_in_grams is not None:
-        product_data['Proteiinia per 100g'] = product_data.get('Proteiini', 0) * (100 / portion_size_in_grams)
+        if product_data.get('Proteiini', 0) + product_data.get('Rasva', 0) + product_data.get('Hiilihydraatit', 0) <= portion_size_in_grams:
+            product_data['Proteiinia per 100g'] = product_data.get('Proteiini', 0) * (100 / portion_size_in_grams)
+        else:
+            product_data['Proteiinia per 100g'] = product_data.get('Proteiini', 0)
     else:
         product_data['Proteiinia per 100g'] = product_data.get('Proteiini', 0)
 
 product_data_df = pd.DataFrame.from_dict(product_dict, orient='index')
-product_data_df['Size'] = product_data_df['Size'].apply(lambda x: x if isinstance(x, (float, int)) else 0)
+product_data_df['Size (kg)'] = product_data_df['Size (kg)'].apply(lambda x: x if isinstance(x, (float, int)) else 0)
 
-# Calculate 'Euroa per 100g Proteiinia' with zero-check for 'Proteiinia per 100g' and 'Size' columns
+# Calculate 'Euroa per 100g Proteiinia' with zero-check for 'Proteiinia per 100g' and 'Size (kg)' columns
 product_data_df['Euroa per 100g Proteiinia'] = np.where(
     (product_data_df['Unit'].isin(['kg', 'l'])) & (product_data_df['Proteiinia per 100g'] > 0),
     (product_data_df['Price per Unit'] / 10.00) * (100 / product_data_df['Proteiinia per 100g']),
     np.where(
-        (product_data_df['Proteiinia per 100g'] != 0) & (product_data_df['Size'] > 0),
-        ((product_data_df['Price per Unit'] / product_data_df['Size']) / 10) * (100 / product_data_df['Proteiinia per 100g']),
+        (product_data_df['Proteiinia per 100g'] > 0) & (product_data_df['Size (kg)'] > 0),
+        ((product_data_df['Price per Unit'] / product_data_df['Size (kg)']) / 10) * (100 / product_data_df['Proteiinia per 100g']),
         np.nan
     )
 )
