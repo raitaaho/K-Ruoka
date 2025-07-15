@@ -20,12 +20,12 @@ import os
 import re
 from collections import OrderedDict
 
-milligram_pattern = re.compile(r'(\d+(?:[.,]\d+)?)\s*mg')
-gram_pattern = re.compile(r'(\d+(?:[.,]\d+)?)\s*g')
-kilogram_pattern = re.compile(r'(\d+(?:[.,]\d+)?)\s*kg')
-milliliter_pattern = re.compile(r'(\d+(?:[.,]\d+)?)\s*ml')
-deciliter_pattern = re.compile(r'(\d+(?:[.,]\d+)?)\s*dl')
-liter_pattern = re.compile(r'(\d+(?:[.,]\d+)?)\s*l')
+milligram_pattern = re.compile(r'(\d+(?:[.,]\d+)?)\s*mg', re.IGNORECASE)
+gram_pattern = re.compile(r'(\d+(?:[.,]\d+)?)\s*g', re.IGNORECASE)
+kilogram_pattern = re.compile(r'(\d+(?:[.,]\d+)?)\s*kg', re.IGNORECASE)
+milliliter_pattern = re.compile(r'(\d+(?:[.,]\d+)?)\s*ml', re.IGNORECASE)
+deciliter_pattern = re.compile(r'(\d+(?:[.,]\d+)?)\s*dl', re.IGNORECASE)
+liter_pattern = re.compile(r'(\d+(?:[.,]\d+)?)\s*l', re.IGNORECASE)
 
 def extract_size_in_g(size_string):
     string = size_string.replace(',', '.')
@@ -183,7 +183,7 @@ for category in product_categories:
         if nutritional_content_dict.get(ean_code, 'Unknown') != 'Unknown':
             nutritional_content_dict[ean_code]['Sydänmerkki'] = sydanmerkki if nutritional_content_dict[ean_code].get('Sydänmerkki', 'Unknown') == 'Unknown' or sydanmerkki == 'Yes' else nutritional_content_dict[ean_code]['Sydänmerkki']
             nutritional_content_dict[ean_code]['Hyvää Suomesta'] = hyvaa_suomesta if nutritional_content_dict[ean_code].get('Hyvää Suomesta', 'Unknown') == 'Unknown' or hyvaa_suomesta == 'Yes' else nutritional_content_dict[ean_code]['Hyvää Suomesta']
-            nutritional_content_dict[ean_code]['Luomu'] = luomu if nutritional_content_dict[ean_code].get('Luomu', 'Unknown') == 'Unknown' or luomu == 'Yes' else nutritional_content_dict[ean_code]['Luomu']
+            nutritional_content_dict[ean_code]['Organic'] = luomu if nutritional_content_dict[ean_code].get('Organic', 'Unknown') == 'Unknown' or luomu == 'Yes' else nutritional_content_dict[ean_code]['Organic']
             try:
                 unit_price_string = card.find_element(By.XPATH, ".//span[@data-test-id='product-price__comparisonPrice']//span").text
                 backslash_index = unit_price_string.find("/")
@@ -311,7 +311,7 @@ for url, ean in product_urls.items():
     nutritional_content_dict[ean].update(kv_pairs)
     nutritional_content_dict[ean]['Sydänmerkki'] = sydanmerkki
     nutritional_content_dict[ean]['Hyvää Suomesta'] = hyvaa_suomesta
-    nutritional_content_dict[ean]['Luomu'] = luomu
+    nutritional_content_dict[ean]['Organic'] = luomu
     product_dict[ean].update(nutritional_content_dict[ean])
 
 try:
@@ -329,3 +329,39 @@ except IOError:
             outfile.write(nutritional_content_json)
     except Exception as e:
         print("Could not write nutritional content data to JSON file", e)
+
+current_time = datetime.now()
+file_name = f"{current_time.strftime('%d')}_{current_time.strftime('%b')}_product_unit_prices_skaupat.xlsx"
+
+for products, product_data in product_dict.items():
+    portion_size_string = product_data.get('Nutritional Value per', 'Unknown')
+    portion_size_in_grams = extract_size_in_g(portion_size_string)
+
+    if portion_size_in_grams != 0 and portion_size_in_grams is not None:
+        if product_data.get('Proteiini', 0) + product_data.get('Rasva', 0) + product_data.get('Hiilihydraatit', 0) <= portion_size_in_grams:
+            product_data['Proteiinia per 100g'] = product_data.get('Proteiini', 0) * (100 / portion_size_in_grams)
+        else:
+            product_data['Proteiinia per 100g'] = product_data.get('Proteiini', 0)
+    else:
+        product_data['Proteiinia per 100g'] = product_data.get('Proteiini', 0)
+
+product_data_df = pd.DataFrame.from_dict(product_dict, orient='index')
+product_data_df['Size (kg)'] = product_data_df['Size (kg)'].apply(lambda x: x if isinstance(x, (float, int)) else 0)
+
+# Calculate 'Euroa per 100g Proteiinia' with zero-check for 'Proteiinia per 100g' and 'Size (kg)' columns
+product_data_df['Euroa per 100g Proteiinia'] = np.where(
+    (product_data_df['Unit'].isin(['kg', 'l'])) & (product_data_df['Proteiinia per 100g'] > 0),
+    (product_data_df['Price per Unit'] / 10.00) * (100 / product_data_df['Proteiinia per 100g']),
+    np.where(
+        (product_data_df['Proteiinia per 100g'] > 0) & (product_data_df['Size (kg)'] > 0),
+        ((product_data_df['Price per Unit'] / product_data_df['Size (kg)']) / 10) * (100 / product_data_df['Proteiinia per 100g']),
+        np.nan
+    )
+)
+product_data_df.index.name = 'EAN-code'
+
+with pd.ExcelWriter(f"{file_name}") as writer:
+    product_data_df.to_excel(writer, sheet_name='Products')
+
+sorted_df = product_data_df.sort_values(by=['Euroa per 100g Proteiinia'], ascending=[True])
+display(sorted_df.head(10))

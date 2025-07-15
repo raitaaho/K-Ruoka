@@ -15,6 +15,7 @@ import pandas as pd
 import numpy as np
 from IPython.display import display
 from datetime import datetime
+from datetime import date
 import json
 import os
 import re
@@ -216,14 +217,7 @@ def get_caffeine_amount(driver):
 product_categories = ['pakasteet/liha--kala--ja-kasvispakasteet',
                       'pakasteet/pakasteateriat',
                       'pakasteet/pizzat-ja-pizzapohjat',
-                      'liha-ja-kasviproteiinit/nauta',
-                      'liha-ja-kasviproteiinit/jauheliha',
-                      'liha-ja-kasviproteiinit/porsas',
-                      'liha-ja-kasviproteiinit/broileri-kana-ja-kalkkuna',
-                      'liha-ja-kasviproteiinit/lammas-poro-ja-riista',
-                      'liha-ja-kasviproteiinit/kasviproteiinit-ja-muu-liha',
-                      'liha-ja-kasviproteiinit/kinkut-ja-leikkeleet',
-                      'liha-ja-kasviproteiinit/makkarat-nakit-ja-pekonit',
+                      'liha-ja-kasviproteiinit',
                       'kala-ja-merenelavat',
                       'valmisruoka/valmisruoat-ja--keitot',
                       'valmisruoka/laatikot-pastat-ja-lasagnet',
@@ -255,6 +249,13 @@ except IOError:
     print("Could not open nutritional content data file. Using empty dictionary.")
     nutritional_content_dict = {}
 
+try:
+    with open('product_price_data.json', 'r') as file2:
+        product_price_dict = json.load(file2)
+except IOError:
+    print("Could not open product price data file. Using empty dictionary.")
+    product_price_dict = {}
+
 driver = uc.Chrome()
 driver.get("https://www.k-ruoka.fi/?kaupat&kauppahaku=Tampere&ketju=kcitymarket&ketju=ksupermarket")
 
@@ -281,7 +282,6 @@ except TimeoutException:
     exit()
 
 counter = 0
-product_dict = {}
 
 while counter < number_of_stores:
     wait = WebDriverWait(driver, 10)
@@ -369,24 +369,31 @@ while counter < number_of_stores:
                         product_urls.update({url: 'Unknown'})
                         continue
                     ean_code = ean_code_string[:hyphen_index] if hyphen_index != -1 else ean_code_string
+
+                    discount_badge_elements = card.find_elements(By.XPATH, ".//div[starts-with(@class, 'ProductCard__Discount')]")
+                    normal_price_elements = card.find_elements(By.XPATH, ".//div[@data-testid='product-normal-price']")
+                    if len(discount_badge_elements) > 0 or len(normal_price_elements) > 0:
+                        discount = 'Yes'
+                    else:
+                        discount = 'No'
                     
                 except Exception as e:
                     print("Could not get product url or EAN code for", card.text, e)
                     continue
 
                 if nutritional_content_dict.get(ean_code, 'Unknown') != 'Unknown':
-                    if nutritional_content_dict[ean_code].get('Vegan', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Lactose Free', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Gluten Free', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Sydänmerkki', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Hyvää Suomesta', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Organic', 'Unknown') == 'Unknown':
+                    if nutritional_content_dict[ean_code].get('Vegan', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Lactose Free', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Gluten Free', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Sydänmerkki', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Hyvää Suomesta', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Organic', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Category', 'Unknown') == 'Unknown':
                         product_urls.update({url: ean_code})
-                        if product_dict.get(ean_code, "None") != "None":
-                            product_dict[ean_code]['Size (kg)'] = size
-                            product_dict[ean_code]['Store'] = store_name
-                            product_dict[ean_code]['Category'] = category
+                        if product_price_dict.get(ean_code, "None") != "None":
+                            product_price_dict[ean_code]['Size (kg)'] = size
+                            product_price_dict[ean_code]['Store'] = store_name
+                            #product_price_dict[ean_code]['Category'] = category
 
                         else:
-                            product_dict[ean_code] = {}
-                            product_dict[ean_code]['Size (kg)'] = size
-                            product_dict[ean_code]['Store'] = store_name
-                            product_dict[ean_code]['Category'] = category
+                            product_price_dict[ean_code] = {}
+                            product_price_dict[ean_code]['Size (kg)'] = size
+                            product_price_dict[ean_code]['Store'] = store_name
+                            #product_price_dict[ean_code]['Category'] = category
                     else:
                         try:
                             unit_price_string = card.find_element(By.XPATH, ".//div[@data-testid='product-unit-price']").text
@@ -423,39 +430,57 @@ while counter < number_of_stores:
                                 unit_type = 'Unknown'
                                 product_urls.update({url: ean_code})
 
-                        if product_dict.get(ean_code, "None") != "None":
-                            if product_dict[ean_code].get('Price per Unit', 'Unknown') != 'Unknown':
-                                if product_dict[ean_code]['Price per Unit'] > unit_price:
-                                    product_dict[ean_code]['Price per Unit'] = unit_price
-                                    product_dict[ean_code]['Unit'] = unit_type
-                                    product_dict[ean_code]['Size (kg)'] = size
-                                    product_dict[ean_code]['Store'] = store_name
-                                    product_dict[ean_code]['Category'] = category
+                        if product_price_dict.get(ean_code, "None") != "None":
+                            if product_price_dict[ean_code].get('Price per Unit', 'Unknown') != 'Unknown':
+                                if product_price_dict[ean_code]['Price per Unit'] > unit_price:
+                                    product_price_dict[ean_code]['Price per Unit'] = unit_price
+                                    product_price_dict[ean_code]['Unit'] = unit_type
+                                    product_price_dict[ean_code]['Size (kg)'] = size
+                                    product_price_dict[ean_code]['Store'] = store_name
+                                    #product_price_dict[ean_code]['Category'] = category
+                                    if discount == 'Yes':
+                                        if product_price_dict[ean_code].get('Discount valid until', 'Unknown') == 'Unknown':
+                                            product_urls.update({url: ean_code})
+                                        else:
+                                            if date.today() > product_price_dict[ean_code]['Discount valid until']:
+                                                product_urls.update({url: ean_code})
 
                             else:
-                                product_dict[ean_code]['Price per Unit'] = unit_price
-                                product_dict[ean_code]['Unit'] = unit_type
-                                product_dict[ean_code]['Size (kg)'] = size
-                                product_dict[ean_code]['Store'] = store_name
-                                product_dict[ean_code]['Category'] = category
+                                product_price_dict[ean_code]['Price per Unit'] = unit_price
+                                product_price_dict[ean_code]['Unit'] = unit_type
+                                product_price_dict[ean_code]['Size (kg)'] = size
+                                product_price_dict[ean_code]['Store'] = store_name
+                                #product_price_dict[ean_code]['Category'] = category
+                                if discount == 'Yes':
+                                    if product_price_dict[ean_code].get('Discount valid until', 'Unknown') == 'Unknown':
+                                        product_urls.update({url: ean_code})
+                                    else:
+                                        if date.today() > product_price_dict[ean_code]['Discount valid until']:
+                                            product_urls.update({url: ean_code})
 
                         else:
-                            product_dict[ean_code] = {}
-                            product_dict[ean_code]['Price per Unit'] = unit_price
-                            product_dict[ean_code]['Unit'] = unit_type
-                            product_dict[ean_code]['Size (kg)'] = size
-                            product_dict[ean_code]['Store'] = store_name
-                            product_dict[ean_code]['Category'] = category
+                            product_price_dict[ean_code] = {}
+                            product_price_dict[ean_code]['Price per Unit'] = unit_price
+                            product_price_dict[ean_code]['Unit'] = unit_type
+                            product_price_dict[ean_code]['Size (kg)'] = size
+                            product_price_dict[ean_code]['Store'] = store_name
+                            #product_price_dict[ean_code]['Category'] = category
+                            if discount == 'Yes':
+                                if product_price_dict[ean_code].get('Discount valid until', 'Unknown') == 'Unknown':
+                                    product_urls.update({url: ean_code})
+                                else:
+                                    if date.today() > product_price_dict[ean_code]['Discount valid until']:
+                                        product_urls.update({url: ean_code})
 
-                    product_dict[ean_code].update(nutritional_content_dict[ean_code])
+                    product_price_dict[ean_code].update(nutritional_content_dict[ean_code])
 
                 else:
                     product_urls.update({url: ean_code})
-                    product_dict[ean_code] = {}
-                    product_dict[ean_code]['Name'] = product_name
-                    product_dict[ean_code]['Size (kg)'] = size
-                    product_dict[ean_code]['Store'] = store_name
-                    product_dict[ean_code]['Category'] = category
+                    product_price_dict[ean_code] = {}
+                    product_price_dict[ean_code]['Name'] = product_name
+                    product_price_dict[ean_code]['Size (kg)'] = size
+                    product_price_dict[ean_code]['Store'] = store_name
+                    product_price_dict[ean_code]['Category'] = category
 
             else:
                 try:
@@ -510,17 +535,17 @@ while counter < number_of_stores:
                         continue
 
                     if nutritional_content_dict.get(ean_code, 'Unknown') != 'Unknown':
-                        if nutritional_content_dict[ean_code].get('Vegan', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Lactose Free', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Gluten Free', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Sydänmerkki', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Hyvää Suomesta', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Organic', 'Unknown') == 'Unknown':
+                        if nutritional_content_dict[ean_code].get('Vegan', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Lactose Free', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Gluten Free', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Sydänmerkki', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Hyvää Suomesta', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Organic', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Category', 'Unknown') == 'Unknown':
                             product_urls.update({url: ean_code})
-                            if product_dict.get(ean_code, "None") != "None":
-                                product_dict[ean_code]['Size (kg)'] = size
-                                product_dict[ean_code]['Store'] = store_name
-                                product_dict[ean_code]['Category'] = category
+                            if product_price_dict.get(ean_code, "None") != "None":
+                                product_price_dict[ean_code]['Size (kg)'] = size
+                                product_price_dict[ean_code]['Store'] = store_name
+                                #product_price_dict[ean_code]['Category'] = category
                             else:
-                                product_dict[ean_code] = {}
-                                product_dict[ean_code]['Size (kg)'] = size
-                                product_dict[ean_code]['Store'] = store_name
-                                product_dict[ean_code]['Category'] = category
+                                product_price_dict[ean_code] = {}
+                                product_price_dict[ean_code]['Size (kg)'] = size
+                                product_price_dict[ean_code]['Store'] = store_name
+                                #product_price_dict[ean_code]['Category'] = category
                         else:
                             try:
                                 unit_price_string = product.find_element(By.XPATH, ".//div[@data-testid='product-unit-price']").text
@@ -557,39 +582,39 @@ while counter < number_of_stores:
                                     unit_type = 'Unknown'
                                     product_urls.update({url: ean_code})
 
-                            if product_dict.get(ean_code, "None") != "None":
-                                if product_dict[ean_code].get('Price per Unit', 'Unknown') != 'Unknown':
-                                    if product_dict[ean_code]['Price per Unit'] > unit_price:
-                                        product_dict[ean_code]['Price per Unit'] = unit_price
-                                        product_dict[ean_code]['Unit'] = unit_type
-                                        product_dict[ean_code]['Size (kg)'] = size
-                                        product_dict[ean_code]['Store'] = store_name
-                                        product_dict[ean_code]['Category'] = category
+                            if product_price_dict.get(ean_code, "None") != "None":
+                                if product_price_dict[ean_code].get('Price per Unit', 'Unknown') != 'Unknown':
+                                    if product_price_dict[ean_code]['Price per Unit'] > unit_price:
+                                        product_price_dict[ean_code]['Price per Unit'] = unit_price
+                                        product_price_dict[ean_code]['Unit'] = unit_type
+                                        product_price_dict[ean_code]['Size (kg)'] = size
+                                        product_price_dict[ean_code]['Store'] = store_name
+                                        #product_price_dict[ean_code]['Category'] = category
 
                                 else:
-                                    product_dict[ean_code]['Price per Unit'] = unit_price
-                                    product_dict[ean_code]['Unit'] = unit_type
-                                    product_dict[ean_code]['Size (kg)'] = size
-                                    product_dict[ean_code]['Store'] = store_name
-                                    product_dict[ean_code]['Category'] = category
+                                    product_price_dict[ean_code]['Price per Unit'] = unit_price
+                                    product_price_dict[ean_code]['Unit'] = unit_type
+                                    product_price_dict[ean_code]['Size (kg)'] = size
+                                    product_price_dict[ean_code]['Store'] = store_name
+                                    #product_price_dict[ean_code]['Category'] = category
 
                             else:
-                                product_dict[ean_code] = {}
-                                product_dict[ean_code]['Price per Unit'] = unit_price
-                                product_dict[ean_code]['Unit'] = unit_type
-                                product_dict[ean_code]['Size (kg)'] = size
-                                product_dict[ean_code]['Store'] = store_name
-                                product_dict[ean_code]['Category'] = category
+                                product_price_dict[ean_code] = {}
+                                product_price_dict[ean_code]['Price per Unit'] = unit_price
+                                product_price_dict[ean_code]['Unit'] = unit_type
+                                product_price_dict[ean_code]['Size (kg)'] = size
+                                product_price_dict[ean_code]['Store'] = store_name
+                                #product_price_dict[ean_code]['Category'] = category
 
-                        product_dict[ean_code].update(nutritional_content_dict[ean_code])
+                        product_price_dict[ean_code].update(nutritional_content_dict[ean_code])
 
                     else:
                         product_urls.update({url: ean_code})
-                        product_dict[ean_code] = {}
-                        product_dict[ean_code]['Name'] = product_name
-                        product_dict[ean_code]['Size (kg)'] = size
-                        product_dict[ean_code]['Store'] = store_name
-                        product_dict[ean_code]['Category'] = category
+                        product_price_dict[ean_code] = {}
+                        product_price_dict[ean_code]['Name'] = product_name
+                        product_price_dict[ean_code]['Size (kg)'] = size
+                        product_price_dict[ean_code]['Store'] = store_name
+                        #product_price_dict[ean_code]['Category'] = category
                         
                 driver.find_element(By.XPATH, "//button[@title='Sulje']").click()
                 time.sleep(2)
@@ -606,6 +631,11 @@ while counter < number_of_stores:
             header = wait.until(EC.visibility_of_element_located((By.XPATH, "//h1[@data-testid='product-name']")))
             product_name = header.text
             size = extract_size_in_kg(product_name)
+            category_elements = driver.find_elements(By.XPATH, "//li[starts-with(@class, 'Breadcrumbs__BreadcrumbsItem')]")
+            if len(category_elements) > 0:
+                category = category_elements[-1].text
+            else:
+                category = 'Unknown'
         except TimeoutException:
             print("Product name not found for", url)
             continue
@@ -694,32 +724,63 @@ while counter < number_of_stores:
             except Exception as e:
                 print("Could not get product price for", product_name, e)
                 unit_price = 999.999
-                unit_type = 'Unknown'  
+                unit_type = 'Unknown'
 
-        if product_dict.get(ean_code, 'Unknown') != 'Unknown':
-            if product_dict[ean_code].get('Price per Unit', 'Unknown') != 'Unknown':
-                if product_dict[ean_code]['Price per Unit'] > unit_price:
-                    product_dict[ean_code]['Price per Unit'] = unit_price
-                    product_dict[ean_code]['Unit'] = unit_type
-                    product_dict[ean_code]['Size (kg)'] = size
-                    product_dict[ean_code]['Store'] = store_name
+        normal_price_elements = driver.find_elements(By.XPATH, "//h1[@data-testid='product-name']//following-sibling::div//div[@data-testid='product-normal-price']")
+        if len(normal_price_elements) > 0:
+            discount = 'Yes'
+            valid_during_elements = driver.find_elements(By.XPATH, "//h1[@data-testid='product-name']//following-sibling::div[starts-with(@class, 'ProductSidebarContent__Info')]")
+            if len(valid_during_elements) > 0:
+                valid_during_string = valid_during_elements[0].text
+                
+                search_res = re.findall(r'(\d+(?:[.,]\d+)?)', valid_during_string)
+                if len(search_res) > 1:
+                    valid_starting_string = search_res[0]
+                    valid_until_string = search_res[1]
+
+                    today = date.today()
+                    valid_starting = datetime(today.year, int(valid_starting_string.split('.')[1]), int(valid_starting_string.split('.')[0]))
+                    valid_until = datetime(today.year, int(valid_until_string.split('.')[1]), int(valid_until_string.split('.')[0]))
+                else:
+                    valid_starting = 'Unknown'
+                    valid_until = 'Unknown'
+            else:
+                valid_starting = 'Unknown'
+                valid_until = 'Unknown'
+        else:
+            discount = 'No'
+            valid_starting = None
+            valid_until = None
+
+        if product_price_dict.get(ean_code, 'Unknown') != 'Unknown':
+            if product_price_dict[ean_code].get('Price per Unit', 'Unknown') != 'Unknown':
+                if product_price_dict[ean_code]['Price per Unit'] > unit_price:
+                    product_price_dict[ean_code]['Price per Unit'] = unit_price
+                    product_price_dict[ean_code]['Unit'] = unit_type
+                    product_price_dict[ean_code]['Size (kg)'] = size
+                    product_price_dict[ean_code]['Store'] = store_name
 
             else:
-                product_dict[ean_code]['Price per Unit'] = unit_price
-                product_dict[ean_code]['Unit'] = unit_type
-                product_dict[ean_code]['Size (kg)'] = size
-                product_dict[ean_code]['Store'] = store_name
+                product_price_dict[ean_code]['Price per Unit'] = unit_price
+                product_price_dict[ean_code]['Unit'] = unit_type
+                product_price_dict[ean_code]['Size (kg)'] = size
+                product_price_dict[ean_code]['Store'] = store_name
 
         else:
-            product_dict[ean_code] = {}
-            product_dict[ean_code]['Name'] = product_name
-            product_dict[ean_code]['Price per Unit'] = unit_price
-            product_dict[ean_code]['Unit'] = unit_type
-            product_dict[ean_code]['Size (kg)'] = size
-            product_dict[ean_code]['Store'] = store_name
+            product_price_dict[ean_code] = {}
+            product_price_dict[ean_code]['Name'] = product_name
+            product_price_dict[ean_code]['Price per Unit'] = unit_price
+            product_price_dict[ean_code]['Unit'] = unit_type
+            product_price_dict[ean_code]['Size (kg)'] = size
+            product_price_dict[ean_code]['Store'] = store_name
+
+        if discount == 'Yes':
+            product_price_dict[ean_code]['Discount valid starting'] = valid_starting
+            product_price_dict[ean_code]['Discount valid until'] = valid_until
 
         if nutritional_content_dict.get(ean_code, 'Unknown') != 'Unknown':
-            if product_dict[ean_code].get('Category', 'Unknown') == 'juomat/energia--ja-urheilujuomat/energiajuomat':
+            nutritional_content_dict[ean_code]['Category'] = category
+            if category == 'Energiajuomat' or category == 'Urheiluvalmisteet':
                 if nutritional_content_dict[ean_code].get('Kofeiini (per 100ml)', 'Unknown') == 'Unknown':
                     caffeine_content, caffeine_amount = get_caffeine_amount(driver)
                     nutritional_content_dict[ean_code]['Kofeiini (per 100ml)'] = caffeine_content
@@ -730,17 +791,18 @@ while counter < number_of_stores:
             nutritional_content_dict[ean_code]['Organic'] = luomu if nutritional_content_dict[ean_code].get('Organic', 'Unknown') == 'Unknown' or luomu == 'Yes' else nutritional_content_dict[ean_code]['Organic']
             nutritional_content_dict[ean_code]['Sydänmerkki'] = sydanmerkki if nutritional_content_dict[ean_code].get('Sydänmerkki', 'Unknown') == 'Unknown' or sydanmerkki == 'Yes' else nutritional_content_dict[ean_code]['Sydänmerkki']
             nutritional_content_dict[ean_code]['Hyvää Suomesta'] = hyvaa_suomesta if nutritional_content_dict[ean_code].get('Hyvää Suomesta', 'Unknown') == 'Unknown' or hyvaa_suomesta == 'Yes' else nutritional_content_dict[ean_code]['Hyvää Suomesta']
-            product_dict[ean_code].update(nutritional_content_dict[ean_code])
+            product_price_dict[ean_code].update(nutritional_content_dict[ean_code])
         else:
             nutritional_content_dict[ean_code] = {}
             nutritional_content_dict[ean_code]['Name'] = product_name
+            nutritional_content_dict[ean_code]['Category'] = category
             nutritional_content_dict[ean_code]['Vegan'] = vegan
             nutritional_content_dict[ean_code]['Gluten Free'] = gluten_free
             nutritional_content_dict[ean_code]['Lactose Free'] = lactose_free
             nutritional_content_dict[ean_code]['Organic'] = luomu
             nutritional_content_dict[ean_code]['Sydänmerkki'] = sydanmerkki
             nutritional_content_dict[ean_code]['Hyvää Suomesta'] = hyvaa_suomesta
-            if product_dict[ean_code].get('Category', 'Unknown') == 'juomat/energia--ja-urheilujuomat/energiajuomat':
+            if category == 'Energiajuomat' or category == 'Urheiluvalmisteet':
                 caffeine_content, caffeine_amount = get_caffeine_amount(driver)
                 nutritional_content_dict[ean_code]['Kofeiini (per 100ml)'] = caffeine_content
                 nutritional_content_dict[ean_code]['Kofeiini (per tuote)'] = caffeine_amount
@@ -757,7 +819,7 @@ while counter < number_of_stores:
                 time.sleep(1)
             except TimeoutException:
                 print("Nutritional content header not found for", product_name)
-                product_dict[ean_code].update(nutritional_content_dict[ean_code])
+                product_price_dict[ean_code].update(nutritional_content_dict[ean_code])
                 continue
 
             keys_list = []
@@ -766,7 +828,7 @@ while counter < number_of_stores:
                 wait = WebDriverWait(driver, 3)
                 table = wait.until(EC.visibility_of_element_located((By.XPATH, "//h2[(text()='Ravintosisältö')]//parent::button//following::table[starts-with(@class, 'NewNutritionalDetails__Table')]")))
                 unit_size = table.find_element(By.XPATH, ".//th[starts-with(@class, 'NewNutritionalDetails__NutritionContentTableColumnHeading')]//div").text
-                product_dict[ean_code]['Nutritional Value per'] = unit_size
+                product_price_dict[ean_code]['Nutritional Value per'] = unit_size
                 keys = table.find_elements(By.XPATH, "//th[starts-with(@class, 'NewNutritionalDetails__NutritionContentTableRowHeading')]")
                 values = table.find_elements(By.XPATH, "//td[starts-with(@class, 'NewNutritionalDetails__NutritionContentTableCell')][1]")
 
@@ -822,12 +884,12 @@ while counter < number_of_stores:
 
                 except Exception as e:
                     print("Could not get nutritional content for", product_name, e)
-                    product_dict[ean_code].update(nutritional_content_dict[ean_code])
+                    product_price_dict[ean_code].update(nutritional_content_dict[ean_code])
                     continue
 
             nutritional_content_dict[ean_code]['Nutritional Value per'] = unit_size
             nutritional_content_dict[ean_code].update(kv_pairs)
-            product_dict[ean_code].update(nutritional_content_dict[ean_code])
+            product_price_dict[ean_code].update(nutritional_content_dict[ean_code])
 
     try:
         # Serializing json
@@ -838,14 +900,21 @@ while counter < number_of_stores:
     except Exception as e:
         print("Could not write nutritional content data to JSON file", e)
 
+    try:
+        product_price_json = json.dumps(product_price_dict, indent=4)
+        with open("product_price.json", "w") as outfile:
+            outfile.write(product_price_json)
+    except Exception as e:
+        print("Could not write product price data to JSON file", e)
+
     print(f"Finished scraping store {counter} of {number_of_stores} - {store_name}")
 
     driver.get("https://www.k-ruoka.fi/?kaupat&kauppahaku=Tampere&ketju=kcitymarket&ketju=ksupermarket")
 
 current_time = datetime.now()
-file_name = f"{current_time.strftime('%d')}_{current_time.strftime('%b')}_product_unit_prices.xlsx"
+file_name = f"{current_time.strftime('%d')}_{current_time.strftime('%b')}_product_unit_prices_kruoka.xlsx"
 
-for products, product_data in product_dict.items():
+for products, product_data in product_price_dict.items():
     portion_size_string = product_data.get('Nutritional Value per', 'Unknown')
     portion_size_in_grams = extract_size_in_g(portion_size_string)
 
@@ -857,7 +926,7 @@ for products, product_data in product_dict.items():
     else:
         product_data['Proteiinia per 100g'] = product_data.get('Proteiini', 0)
 
-product_data_df = pd.DataFrame.from_dict(product_dict, orient='index')
+product_data_df = pd.DataFrame.from_dict(product_price_dict, orient='index')
 product_data_df['Size (kg)'] = product_data_df['Size (kg)'].apply(lambda x: x if isinstance(x, (float, int)) else 0)
 
 # Calculate 'Euroa per 100g Proteiinia' with zero-check for 'Proteiinia per 100g' and 'Size (kg)' columns
