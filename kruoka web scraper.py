@@ -250,7 +250,7 @@ except IOError:
     nutritional_content_dict = {}
 
 try:
-    with open('product_price_data.json', 'r') as file2:
+    with open('product_prices_data.json', 'r') as file2:
         product_price_dict = json.load(file2)
 except IOError:
     print("Could not open product price data file. Using empty dictionary.")
@@ -387,13 +387,12 @@ while counter < number_of_stores:
                         if product_price_dict.get(ean_code, "None") != "None":
                             product_price_dict[ean_code]['Size (kg)'] = size
                             product_price_dict[ean_code]['Store'] = store_name
-                            #product_price_dict[ean_code]['Category'] = category
-
+                            
                         else:
                             product_price_dict[ean_code] = {}
                             product_price_dict[ean_code]['Size (kg)'] = size
                             product_price_dict[ean_code]['Store'] = store_name
-                            #product_price_dict[ean_code]['Category'] = category
+                            
                     else:
                         try:
                             unit_price_string = card.find_element(By.XPATH, ".//div[@data-testid='product-unit-price']").text
@@ -437,7 +436,7 @@ while counter < number_of_stores:
                                     product_price_dict[ean_code]['Unit'] = unit_type
                                     product_price_dict[ean_code]['Size (kg)'] = size
                                     product_price_dict[ean_code]['Store'] = store_name
-                                    #product_price_dict[ean_code]['Category'] = category
+                                    
                                     if discount == 'Yes':
                                         if product_price_dict[ean_code].get('Discount valid until', 'Unknown') == 'Unknown':
                                             product_urls.update({url: ean_code})
@@ -450,7 +449,7 @@ while counter < number_of_stores:
                                 product_price_dict[ean_code]['Unit'] = unit_type
                                 product_price_dict[ean_code]['Size (kg)'] = size
                                 product_price_dict[ean_code]['Store'] = store_name
-                                #product_price_dict[ean_code]['Category'] = category
+                                
                                 if discount == 'Yes':
                                     if product_price_dict[ean_code].get('Discount valid until', 'Unknown') == 'Unknown':
                                         product_urls.update({url: ean_code})
@@ -464,7 +463,7 @@ while counter < number_of_stores:
                             product_price_dict[ean_code]['Unit'] = unit_type
                             product_price_dict[ean_code]['Size (kg)'] = size
                             product_price_dict[ean_code]['Store'] = store_name
-                            #product_price_dict[ean_code]['Category'] = category
+                            
                             if discount == 'Yes':
                                 if product_price_dict[ean_code].get('Discount valid until', 'Unknown') == 'Unknown':
                                     product_urls.update({url: ean_code})
@@ -540,12 +539,12 @@ while counter < number_of_stores:
                             if product_price_dict.get(ean_code, "None") != "None":
                                 product_price_dict[ean_code]['Size (kg)'] = size
                                 product_price_dict[ean_code]['Store'] = store_name
-                                #product_price_dict[ean_code]['Category'] = category
+                                
                             else:
                                 product_price_dict[ean_code] = {}
                                 product_price_dict[ean_code]['Size (kg)'] = size
                                 product_price_dict[ean_code]['Store'] = store_name
-                                #product_price_dict[ean_code]['Category'] = category
+                                
                         else:
                             try:
                                 unit_price_string = product.find_element(By.XPATH, ".//div[@data-testid='product-unit-price']").text
@@ -589,14 +588,12 @@ while counter < number_of_stores:
                                         product_price_dict[ean_code]['Unit'] = unit_type
                                         product_price_dict[ean_code]['Size (kg)'] = size
                                         product_price_dict[ean_code]['Store'] = store_name
-                                        #product_price_dict[ean_code]['Category'] = category
 
                                 else:
                                     product_price_dict[ean_code]['Price per Unit'] = unit_price
                                     product_price_dict[ean_code]['Unit'] = unit_type
                                     product_price_dict[ean_code]['Size (kg)'] = size
                                     product_price_dict[ean_code]['Store'] = store_name
-                                    #product_price_dict[ean_code]['Category'] = category
 
                             else:
                                 product_price_dict[ean_code] = {}
@@ -604,7 +601,6 @@ while counter < number_of_stores:
                                 product_price_dict[ean_code]['Unit'] = unit_type
                                 product_price_dict[ean_code]['Size (kg)'] = size
                                 product_price_dict[ean_code]['Store'] = store_name
-                                #product_price_dict[ean_code]['Category'] = category
 
                         product_price_dict[ean_code].update(nutritional_content_dict[ean_code])
 
@@ -614,7 +610,7 @@ while counter < number_of_stores:
                         product_price_dict[ean_code]['Name'] = product_name
                         product_price_dict[ean_code]['Size (kg)'] = size
                         product_price_dict[ean_code]['Store'] = store_name
-                        #product_price_dict[ean_code]['Category'] = category
+                        
                         
                 driver.find_element(By.XPATH, "//button[@title='Sulje']").click()
                 time.sleep(2)
@@ -633,7 +629,7 @@ while counter < number_of_stores:
             size = extract_size_in_kg(product_name)
             category_elements = driver.find_elements(By.XPATH, "//li[starts-with(@class, 'Breadcrumbs__BreadcrumbsItem')]")
             if len(category_elements) > 0:
-                category = category_elements[-1].text
+                category = category_elements[len(category_elements) - 2].text
             else:
                 category = 'Unknown'
         except TimeoutException:
@@ -729,18 +725,24 @@ while counter < number_of_stores:
         normal_price_elements = driver.find_elements(By.XPATH, "//h1[@data-testid='product-name']//following-sibling::div//div[@data-testid='product-normal-price']")
         if len(normal_price_elements) > 0:
             discount = 'Yes'
-            valid_during_elements = driver.find_elements(By.XPATH, "//h1[@data-testid='product-name']//following-sibling::div[starts-with(@class, 'ProductSidebarContent__Info')]")
+            valid_during_elements = driver.find_elements(By.XPATH, "//h1[@data-testid='product-name']//following::div[starts-with(@class, 'ProductSidebarContent__Info')]")
             if len(valid_during_elements) > 0:
                 valid_during_string = valid_during_elements[0].text
                 
                 search_res = re.findall(r'(\d+(?:[.,]\d+)?)', valid_during_string)
-                if len(search_res) > 1:
+                if len(search_res) == 2:
                     valid_starting_string = search_res[0]
                     valid_until_string = search_res[1]
 
                     today = date.today()
                     valid_starting = datetime(today.year, int(valid_starting_string.split('.')[1]), int(valid_starting_string.split('.')[0]))
                     valid_until = datetime(today.year, int(valid_until_string.split('.')[1]), int(valid_until_string.split('.')[0]))
+                elif len(search_res) == 4:
+                    valid_starting_string = search_res[0]
+                    valid_until_string = search_res[2]
+
+                    valid_starting = datetime(search_res[1], int(valid_starting_string.split('.')[1]), int(valid_starting_string.split('.')[0]))
+                    valid_until = datetime(search_res[3], int(valid_until_string.split('.')[1]), int(valid_until_string.split('.')[0]))
                 else:
                     valid_starting = 'Unknown'
                     valid_until = 'Unknown'
@@ -802,10 +804,12 @@ while counter < number_of_stores:
             nutritional_content_dict[ean_code]['Organic'] = luomu
             nutritional_content_dict[ean_code]['Sydänmerkki'] = sydanmerkki
             nutritional_content_dict[ean_code]['Hyvää Suomesta'] = hyvaa_suomesta
+
             if category == 'Energiajuomat' or category == 'Urheiluvalmisteet':
                 caffeine_content, caffeine_amount = get_caffeine_amount(driver)
                 nutritional_content_dict[ean_code]['Kofeiini (per 100ml)'] = caffeine_content
                 nutritional_content_dict[ean_code]['Kofeiini (per tuote)'] = caffeine_amount
+
             try:
                 wait = WebDriverWait(driver, 2)
                 nutritional_content_header = wait.until(EC.element_to_be_clickable((By.XPATH, "//h2[text()='Ravintosisältö']")))
@@ -902,7 +906,7 @@ while counter < number_of_stores:
 
     try:
         product_price_json = json.dumps(product_price_dict, indent=4)
-        with open("product_price.json", "w") as outfile:
+        with open("product_prices_data.json", "w") as outfile:
             outfile.write(product_price_json)
     except Exception as e:
         print("Could not write product price data to JSON file", e)
@@ -912,7 +916,7 @@ while counter < number_of_stores:
     driver.get("https://www.k-ruoka.fi/?kaupat&kauppahaku=Tampere&ketju=kcitymarket&ketju=ksupermarket")
 
 current_time = datetime.now()
-file_name = f"{current_time.strftime('%d')}_{current_time.strftime('%b')}_product_unit_prices_kruoka.xlsx"
+file_name = f"{current_time.strftime('%d')}_{current_time.strftime('%b')}_product_prices_kruoka.xlsx"
 
 for products, product_data in product_price_dict.items():
     portion_size_string = product_data.get('Nutritional Value per', 'Unknown')
