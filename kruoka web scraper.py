@@ -20,6 +20,7 @@ import json
 import os
 import re
 from collections import OrderedDict
+import random
 
 milligram_pattern = re.compile(r'(\d+(?:[.,]\d+)?)\s*mg')
 gram_pattern = re.compile(r'(\d+(?:[.,]\d+)?)\s*g')
@@ -136,7 +137,7 @@ def get_caffeine_amount(driver):
         wait = WebDriverWait(driver, 3)
         product_info_header = wait.until(EC.element_to_be_clickable((By.XPATH, "//h2[text()='Tuotetiedot']")))
         product_info_header.click()
-        time.sleep(1)
+        time.sleep(random.uniform(0, 2))
         try:
             wait = WebDriverWait(driver, 3)
             product_details = wait.until(EC.presence_of_element_located((By.XPATH, "//h3[text()='Ainesosat']//following-sibling::p"))).text
@@ -167,7 +168,7 @@ def get_caffeine_amount(driver):
             
             if caffeine_content != 0:
                 product_info_header.click()
-                time.sleep(1)
+                time.sleep(random.uniform(0, 2))
                 return caffeine_content, caffeine_amount
         except TimeoutException:
             product_details = ''
@@ -201,12 +202,12 @@ def get_caffeine_amount(driver):
             
             if caffeine_content != 0:
                 product_info_header.click()
-                time.sleep(1)
+                time.sleep(random.uniform(0, 2))
                 return caffeine_content, caffeine_amount
         except TimeoutException:
             product_instructions = ''
         product_info_header.click()
-        time.sleep(1)
+        time.sleep(random.uniform(0, 2))
                                                                         
     except TimeoutException:
         product_details = None
@@ -214,28 +215,21 @@ def get_caffeine_amount(driver):
 
     return caffeine_content, caffeine_amount
 
-product_categories = ['pakasteet/liha--kala--ja-kasvispakasteet',
-                      'pakasteet/pakasteateriat',
-                      'pakasteet/pizzat-ja-pizzapohjat',
+product_categories = ['pakasteet',
                       'liha-ja-kasviproteiinit',
                       'kala-ja-merenelavat',
-                      'valmisruoka/valmisruoat-ja--keitot',
-                      'valmisruoka/laatikot-pastat-ja-lasagnet',
-                      'valmisruoka/pyorykat-pihvit-ja-ohukaiset',
-                      'maito-juusto-munat-ja-rasvat/maitotuotteet/rahkat',
-                      'maito-juusto-munat-ja-rasvat/jogurtit',
-                      'maito-juusto-munat-ja-rasvat/munat',
-                      'maito-juusto-munat-ja-rasvat/rahkat-vanukkaat-ja-valipalat',
-                      'maito-juusto-munat-ja-rasvat/juustot-leivan-paalle',
-                      'maito-juusto-munat-ja-rasvat/ruoka--ja-herkuttelujuustot',
-                      'kuivat-elintarvikkeet-ja-leivonta/leseet-rouheet-alkiot-soijavalmisteet-ja-muut-viljatuotteet/leseet-rouheet-alkiot-soijavalmisteet-ja-viljajyvat',
-                      'kuivat-elintarvikkeet-ja-leivonta/siemenet-pahkinat-ja-kuivatut-hedelmat/pahkinat',
-                      'kuivat-elintarvikkeet-ja-leivonta/siemenet-pahkinat-ja-kuivatut-hedelmat/siemenet',
-                      'kuivat-elintarvikkeet-ja-leivonta/kuivatut-herneet-pavut-ja-linssit',
-                      'sailykkeet-keitot-ja-ateria-ainekset/sailykkeet/vihannessailykkeet',
-                      'sailykkeet-keitot-ja-ateria-ainekset/sailykkeet/valmisruokasailykkeet',
-                      'sailykkeet-keitot-ja-ateria-ainekset/sailykkeet/kala--ja-ayriaissailykkeet',
-                      'sailykkeet-keitot-ja-ateria-ainekset/sailykkeet/liha--ja-riistasailykkeet',
+                      'valmisruoka',
+                      'maito-juusto-munat-ja-rasvat',
+                      'kuivat-elintarvikkeet-ja-leivonta',
+                      'sailykkeet-keitot-ja-ateria-ainekset/sailykkeet',
+                      'kosmetiikka-terveys-ja-hygienia/terveysvalmisteet/urheiluvalmisteet',
+                      'juomat/energia--ja-urheilujuomat/energiajuomat'
+                      ]
+
+product_categories2 = [
+                      'maito-juusto-munat-ja-rasvat',
+                      'kuivat-elintarvikkeet-ja-leivonta',
+                      'sailykkeet-keitot-ja-ateria-ainekset/sailykkeet',
                       'kosmetiikka-terveys-ja-hygienia/terveysvalmisteet/urheiluvalmisteet',
                       'juomat/energia--ja-urheilujuomat/energiajuomat'
                       ]
@@ -256,7 +250,38 @@ except IOError:
     print("Could not open product price data file. Using empty dictionary.")
     product_price_dict = {}
 
-driver = uc.Chrome()
+today = date.today()
+
+for ean in list(product_price_dict.keys()):
+    details = product_price_dict[ean]
+    discount_until = details.get('Discount valid until', 'Unknown')
+    if discount_until != 'Unknown':
+        if today > date(int(product_price_dict[ean]['Discount valid until'].split('.')[2]), int(product_price_dict[ean]['Discount valid until'].split('.')[1]), int(product_price_dict[ean]['Discount valid until'].split('.')[0])):   
+            product_price_dict.pop(ean)
+            print('Deleted', ean)
+
+product_price_json = json.dumps(product_price_dict, indent=4)
+with open("product_prices_data.json", "w") as outfile:
+    outfile.write(product_price_json)
+
+new_products_list = []
+
+user_agents = [
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0",
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
+    "Mozilla/5.0 (Linux; Android 14; SM-G991B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36",
+    "Mozilla/5.0 (iPad; CPU OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/124.0.2478.80",
+]
+user_agent = random.choice(user_agents)
+
+options = uc.ChromeOptions()
+options.add_argument(f'--user-agent={user_agent}')
+
+driver = uc.Chrome(options=options)
 driver.get("https://www.k-ruoka.fi/?kaupat&kauppahaku=Tampere&ketju=kcitymarket&ketju=ksupermarket")
 
 wait = WebDriverWait(driver, 10)
@@ -264,6 +289,7 @@ try:
     accept_cookies = wait.until(EC.element_to_be_clickable((By.XPATH, f"//button[@id='onetrust-accept-btn-handler']")))
     # Click accept cookies button
     accept_cookies.click()
+    time.sleep(random.uniform(0, 2))
 except TimeoutException:
     print('Prompt to accept cookies did not pop up')
 
@@ -284,6 +310,7 @@ except TimeoutException:
 counter = 0
 
 while counter < number_of_stores:
+    start = time.perf_counter()
     wait = WebDriverWait(driver, 10)
     try:
         store_list_element = wait.until(EC.visibility_of_element_located((By.XPATH, "//ul[@data-component='store-list']")))
@@ -295,9 +322,10 @@ while counter < number_of_stores:
                 break
             store_list_container = driver.find_element(By.XPATH, "//div[starts-with(@class, 'StoreSelector__StyledVerticalScrollAwareContainer')]")
             store_list_container.click()
+            time.sleep(random.uniform(0, 2))
             store_list_container.send_keys(Keys.PAGE_DOWN)
 
-            time.sleep(1)
+            time.sleep(random.uniform(0, 2))
 
             stores = store_list_element.find_elements(By.XPATH, ".//li[@data-component='store-list-item']")
             new_number_of_stores = len(stores)
@@ -313,9 +341,9 @@ while counter < number_of_stores:
         store = stores[counter].find_element(By.XPATH, f".//button[@data-select-store='{store_name}']")
         driver.execute_script("arguments[0].scrollIntoView()", store)
 
-        time.sleep(1)
+        time.sleep(random.uniform(0, 2))
         store.click()
-        time.sleep(2)
+        time.sleep(random.uniform(0, 2))
 
         counter += 1
 
@@ -324,10 +352,11 @@ while counter < number_of_stores:
         counter += 1
         continue
 
-    for category in product_categories:
+    for shop_category in product_categories2:
+        start2 = time.perf_counter()
         product_urls = {}
-        driver.get(f"https://www.k-ruoka.fi/kauppa/tuotehaku/{category}")
-        time.sleep(1)
+        driver.get(f"https://www.k-ruoka.fi/kauppa/tuotehaku/{shop_category}")
+        time.sleep(random.uniform(0, 2))
         
         wait = WebDriverWait(driver, 3)
         try:
@@ -336,14 +365,14 @@ while counter < number_of_stores:
             last_list_len = len(product_cards)
             while True:
                 driver.execute_script("arguments[0].scrollIntoView()", product_cards[-1])
-                time.sleep(3)
+                time.sleep(random.uniform(3, 4))
                 product_cards = driver.find_elements(By.XPATH, "//ul[@data-testid='product-search-results']//li[@data-testid='product-card']")
                 new_list_len = len(product_cards)
                 if new_list_len == last_list_len:
                     break
                 last_list_len = new_list_len
         except TimeoutException:
-            print("No products found in", store_name, "for category", category)
+            print("No products found in", store_name, "for category", shop_category)
             continue
         
         wait = WebDriverWait(driver, 3)
@@ -351,7 +380,7 @@ while counter < number_of_stores:
             products_element = wait.until(EC.visibility_of_element_located((By.XPATH, "//ul[@data-testid='product-search-results']")))
             product_cards = products_element.find_elements(By.XPATH, ".//li[@data-testid='product-card']")
         except TimeoutException:
-            print("No products found in", store_name, "for category", category, "after scrolling")
+            print("No products found in", store_name, "for category", shop_category, "after scrolling")
             continue
 
         for card in product_cards:
@@ -367,6 +396,7 @@ while counter < number_of_stores:
                     else:
                         print("EAN code is an empty string for", product_name)
                         product_urls.update({url: 'Unknown'})
+                        print('Added', url, 'to list')
                         continue
                     ean_code = ean_code_string[:hyphen_index] if hyphen_index != -1 else ean_code_string
 
@@ -384,6 +414,7 @@ while counter < number_of_stores:
                 if nutritional_content_dict.get(ean_code, 'Unknown') != 'Unknown':
                     if nutritional_content_dict[ean_code].get('Vegan', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Lactose Free', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Gluten Free', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Sydänmerkki', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Hyvää Suomesta', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Organic', 'Unknown') == 'Unknown' or nutritional_content_dict[ean_code].get('Category', 'Unknown') == 'Unknown':
                         product_urls.update({url: ean_code})
+                        print('Added due to unknown nutritional content', ean_code)
                         if product_price_dict.get(ean_code, "None") != "None":
                             product_price_dict[ean_code]['Size (kg)'] = size
                             product_price_dict[ean_code]['Store'] = store_name
@@ -428,6 +459,8 @@ while counter < number_of_stores:
                                 unit_price = 999.999
                                 unit_type = 'Unknown'
                                 product_urls.update({url: ean_code})
+                                print('Added due to unknown price', ean_code)
+                                
 
                         if product_price_dict.get(ean_code, "None") != "None":
                             if product_price_dict[ean_code].get('Price per Unit', 'Unknown') != 'Unknown':
@@ -440,10 +473,7 @@ while counter < number_of_stores:
                                     if discount == 'Yes':
                                         if product_price_dict[ean_code].get('Discount valid until', 'Unknown') == 'Unknown':
                                             product_urls.update({url: ean_code})
-                                        else:
-                                            today = date.today()
-                                            if today > datetime(today.year, int(product_price_dict[ean_code]['Discount valid until'].split('.')[1]), int(product_price_dict[ean_code]['Discount valid until'].split('.')[0])):
-                                                product_urls.update({url: ean_code})
+                                            print('Added due to unknown discount window', ean_code)
 
                             else:
                                 product_price_dict[ean_code]['Price per Unit'] = unit_price
@@ -454,10 +484,7 @@ while counter < number_of_stores:
                                 if discount == 'Yes':
                                     if product_price_dict[ean_code].get('Discount valid until', 'Unknown') == 'Unknown':
                                         product_urls.update({url: ean_code})
-                                    else:
-                                        today = date.today()
-                                        if today > datetime(today.year, int(product_price_dict[ean_code]['Discount valid until'].split('.')[1]), int(product_price_dict[ean_code]['Discount valid until'].split('.')[0])):
-                                            product_urls.update({url: ean_code})
+                                        print('Added due to unknown discount window', ean_code)
 
                         else:
                             product_price_dict[ean_code] = {}
@@ -469,41 +496,44 @@ while counter < number_of_stores:
                             if discount == 'Yes':
                                 if product_price_dict[ean_code].get('Discount valid until', 'Unknown') == 'Unknown':
                                     product_urls.update({url: ean_code})
-                                else:
-                                    today = date.today()
-                                    if today > datetime(today.year, int(product_price_dict[ean_code]['Discount valid until'].split('.')[1]), int(product_price_dict[ean_code]['Discount valid until'].split('.')[0])):
-                                        product_urls.update({url: ean_code})
+                                    print('Added due to unknown discount window', ean_code)
 
                     product_price_dict[ean_code].update(nutritional_content_dict[ean_code])
 
                 else:
                     product_urls.update({url: ean_code})
+                    print('Added due to unknown product', ean_code)
                     product_price_dict[ean_code] = {}
                     product_price_dict[ean_code]['Name'] = product_name
                     product_price_dict[ean_code]['Size (kg)'] = size
                     product_price_dict[ean_code]['Store'] = store_name
-                    product_price_dict[ean_code]['Category'] = category
+
+                if discount == 'Yes' and product_price_dict[ean_code].get('Discount valid until', 'Unknown') == 'Unknown':
+                    new_products_list.append(ean_code)
+                    print('Added to new product list', ean_code)
 
             else:
                 try:
                     driver.execute_script("arguments[0].scrollIntoView()", card)
                     nayta_tuotteet_button = card.find_element(By.XPATH, ".//button[@aria-label='Näytä tuotteet']")
                     nayta_tuotteet_button.click()
+                    time.sleep(random.uniform(0, 2))
                 except Exception as e:
                     try:
-                        time.sleep(1)
+                        time.sleep(random.uniform(0, 2))
                         nayta_tuotteet_button = card.find_element(By.XPATH, ".//button[@aria-label='Näytä tuotteet']")
                         driver.execute_script("arguments[0].scrollIntoView()", nayta_tuotteet_button)
-                        time.sleep(1)
+                        time.sleep(random.uniform(0, 2))
                         nayta_tuotteet_button.click()
+                        time.sleep(random.uniform(0, 2))
                     except Exception as e:
                         try:
                             driver.find_element(By.XPATH, "//button[@title='Sulje']").click()
-                            time.sleep(3)
+                            time.sleep(random.uniform(3, 5))
 
                             nayta_tuotteet_button = card.find_element(By.XPATH, ".//button[@aria-label='Näytä tuotteet']")
                             driver.execute_script("arguments[0].scrollIntoView()", nayta_tuotteet_button)
-                            time.sleep(3)
+                            time.sleep(random.uniform(3, 5))
                             nayta_tuotteet_button.click()
                             
                         except Exception as e:
@@ -616,12 +646,17 @@ while counter < number_of_stores:
                         
                         
                 driver.find_element(By.XPATH, "//button[@title='Sulje']").click()
-                time.sleep(2)
+                time.sleep(random.uniform(2, 4))
+
+        end2 = time.perf_counter()
+        print('Scraped prices for category', shop_category, 'in', (end2-start2)/60, 'minutes')
+        start3 = time.perf_counter()
 
         for url, ean in product_urls.items():
             if url is not None:
                 try:
                     driver.get(url)
+                    time.sleep(random.uniform(1, 3))
                 except Exception as e:
                     print("Could not open link")
                     continue
@@ -635,9 +670,12 @@ while counter < number_of_stores:
                 product_name = header.text
                 size = extract_size_in_kg(product_name)
                 category_elements = driver.find_elements(By.XPATH, "//li[starts-with(@class, 'Breadcrumbs__BreadcrumbsItem')]")
-                if len(category_elements) > 0:
+                if len(category_elements) > 1:
                     category = category_elements[len(category_elements) - 2].text
+                elif len(category_elements) == 1:
+                    category = category_elements[0].text
                 else:
+                    print('Unknown category for', ean, product_name)
                     category = 'Unknown'
             except TimeoutException:
                 print("Product name not found for", url)
@@ -648,7 +686,7 @@ while counter < number_of_stores:
                     wait = WebDriverWait(driver, 5)
                     product_info_header = wait.until(EC.element_to_be_clickable((By.XPATH, "//h2[text()='Tuotetiedot']")))
                     product_info_header.click()
-                    time.sleep(1)
+                    time.sleep(random.uniform(0, 2))
                 except TimeoutException:
                     print("Product info header not found for", product_name)
                     continue
@@ -658,7 +696,7 @@ while counter < number_of_stores:
                     ean_element = wait.until(EC.visibility_of_element_located((By.XPATH, "//h3[text()='EAN-koodi']//following-sibling::p")))
                     ean_code = ean_element.text
                     product_info_header.click()
-                    time.sleep(1)
+                    time.sleep(random.uniform(0, 2))
                 except TimeoutException:
                     print("EAN code not found for", product_name)
                     continue
@@ -736,23 +774,21 @@ while counter < number_of_stores:
                 if len(valid_during_elements) > 0:
                     valid_during_string = valid_during_elements[0].text
                     
-                    search_res = re.findall(r'(\d{1,2}\.\d{1,2})', valid_during_string)
-                    if len(search_res) == 2:
-                        valid_starting = search_res[0]
-                        valid_until = search_res[1]
-                    elif len(search_res) == 4:
-                        valid_starting = search_res[0]
-                        valid_until = search_res[2]
-                    else:
-                        valid_starting = 'Unknown'
-                        valid_until = 'Unknown'
+                    search_res = re.findall(r'(\d{1,2})\.(\d{1,2})(?:\.(\d{4}))?', valid_during_string)
+                    valid_starting_string = '.'.join([part for part in search_res[0] if part])
+                    valid_until_string = '.'.join([part for part in search_res[1] if part])
+
+                    valid_starting = valid_starting_string if len(valid_starting_string.split('.')) == 3 else valid_starting_string + '.' + str(today.year) if len(valid_starting_string.split('.')) == 2 else 'Unknown'
+
+                    valid_until = valid_until_string if len(valid_until_string.split('.')) == 3 else valid_until_string + '.' + str(today.year) if len(valid_until_string.split('.')) == 2 else 'Unknown'
+                
                 else:
                     valid_starting = 'Unknown'
                     valid_until = 'Unknown'
             else:
                 discount = 'No'
-                valid_starting = None
-                valid_until = None
+                valid_starting = 'Unknown'
+                valid_until = 'Unknown'
 
             if product_price_dict.get(ean_code, 'Unknown') != 'Unknown':
                 if product_price_dict[ean_code].get('Price per Unit', 'Unknown') != 'Unknown':
@@ -811,16 +847,16 @@ while counter < number_of_stores:
                     nutritional_content_dict[ean_code]['Kofeiini (per tuote)'] = caffeine_amount
 
                 try:
-                    wait = WebDriverWait(driver, 2)
+                    wait = WebDriverWait(driver, 3)
                     nutritional_content_header = wait.until(EC.element_to_be_clickable((By.XPATH, "//h2[text()='Ravintosisältö']")))
                     nutritional_content_header.click()
-                    time.sleep(1)
+                    time.sleep(random.uniform(0, 2))
                 except ElementClickInterceptedException:
                     nutritional_content_header = driver.find_element(By.XPATH, "//h2[text()='Ravintosisältö']")
                     driver.execute_script("arguments[0].scrollIntoView()", nutritional_content_header)
-                    time.sleep(1)
+                    time.sleep(random.uniform(0, 2))
                     nutritional_content_header.click()
-                    time.sleep(1)
+                    time.sleep(random.uniform(0, 2))
                 except TimeoutException:
                     print("Nutritional content header not found for", product_name)
                     product_price_dict[ean_code].update(nutritional_content_dict[ean_code])
@@ -894,7 +930,9 @@ while counter < number_of_stores:
                 nutritional_content_dict[ean_code]['Nutritional Value per'] = unit_size
                 nutritional_content_dict[ean_code].update(kv_pairs)
                 product_price_dict[ean_code].update(nutritional_content_dict[ean_code])
-
+                time.sleep(random.uniform(0, 2))
+        end3 = time.perf_counter()
+        print('Scraped product information for category', shop_category, 'in', (end3-start3)/60, 'minutes')
         try:
             # Serializing json
             nutritional_content_json = json.dumps(nutritional_content_dict, indent=4)
@@ -911,14 +949,15 @@ while counter < number_of_stores:
         except Exception as e:
             print("Could not write product price data to JSON file", e)
 
-    print(f"Finished scraping store {counter} of {number_of_stores} - {store_name}")
+    end = time.perf_counter()
+    print(f"Finished scraping store {counter} of {number_of_stores} - {store_name} in {(end - start) / 60} minutes")
 
     driver.get("https://www.k-ruoka.fi/?kaupat&kauppahaku=Tampere&ketju=kcitymarket&ketju=ksupermarket")
 
 current_time = datetime.now()
-file_name = f"{current_time.strftime('%d')}_{current_time.strftime('%b')}_product_prices_kruoka.xlsx"
+file_name = f"product_prices_kruoka_{current_time.strftime('%d')}_{current_time.strftime('%b')}.xlsx"
 
-for products, product_data in product_price_dict.items():
+for ean, product_data in product_price_dict.items():
     portion_size_string = product_data.get('Nutritional Value per', 'Unknown')
     portion_size_in_grams = extract_size_in_g(portion_size_string)
 
@@ -943,10 +982,16 @@ product_data_df['Euroa per 100g Proteiinia'] = np.where(
         np.nan
     )
 )
+
 product_data_df.index.name = 'EAN-code'
+
+new_product_data_df = product_data_df[product_data_df['EAN-code'].isin(new_products_list)].copy()
 
 with pd.ExcelWriter(f"{file_name}") as writer:
     product_data_df.to_excel(writer, sheet_name='Products')
+
+with pd.ExcelWriter(f"NEW_{file_name}") as writer2:
+    new_product_data_df.to_excel(writer2, sheet_name='Products')
 
 sorted_df = product_data_df.sort_values(by=['Euroa per 100g Proteiinia'], ascending=[True])
 display(sorted_df.head(10))
