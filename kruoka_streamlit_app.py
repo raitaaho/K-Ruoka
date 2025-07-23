@@ -5,6 +5,8 @@ import os
 
 # Find the latest Excel file matching the pattern
 excel_files = glob.glob("product_prices_kruoka_*.xlsx")
+
+
 if not excel_files:
     st.error("No Excel files found matching 'product_prices_kruoka_*.xlsx'")
 else:

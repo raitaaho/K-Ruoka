@@ -219,15 +219,30 @@ def get_caffeine_amount(driver):
 product_categories = ['pakasteet',
                       'liha-ja-kasviproteiinit',
                       'kala-ja-merenelavat',
-                      'valmisruoka',
-                      'maito-juusto-munat-ja-rasvat',
-                      'kuivat-elintarvikkeet-ja-leivonta',
-                      'sailykkeet-keitot-ja-ateria-ainekset/sailykkeet',
+                      'valmisruoka/valmisruoat-ja--keitot',
+                      'valmisruoka/laatikot-pastat-ja-lasagnet',
+                      'valmisruoka/pyorykat-pihvit-ja-ohukaiset'
+                      'maito-juusto-munat-ja-rasvat/maitotuotteet/rahkat',
+                      'maito-juusto-munat-ja-rasvat/jogurtit',
+                      'maito-juusto-munat-ja-rasvat/rahkat-vanukkaat-ja-valipalat',
+                      'maito-juusto-munat-ja-rasvat/juustot-leivan-paalle',
+                      'maito-juusto-munat-ja-rasvat/ruoka--ja-herkuttelujuustot',
+                      'maito-juusto-munat-ja-rasvat/munat',
+                      'kuivat-elintarvikkeet-ja-leivonta/murot-ja-myslit',
+                      'kuivat-elintarvikkeet-ja-leivonta/leseet-rouheet-alkiot-soijavalmisteet-ja-muut-viljatuotteet',
+                      'kuivat-elintarvikkeet-ja-leivonta/kuivatut-herneet-pavut-ja-linssit',
+                      'kuivat-elintarvikkeet-ja-leivonta/siemenet-pahkinat-ja-kuivatut-hedelmat',
+                      'sailykkeet-keitot-ja-ateria-ainekset/sailykkeet/vihannessailykkeet',
+                      'sailykkeet-keitot-ja-ateria-ainekset/sailykkeet/kala--ja-ayriaissailykkeet',
+                      'sailykkeet-keitot-ja-ateria-ainekset/sailykkeet/liha--ja-riistasailykkeet',
+                      'sailykkeet-keitot-ja-ateria-ainekset/sailykkeet/valmisruokasailykkeet',
                       'kosmetiikka-terveys-ja-hygienia/terveysvalmisteet/urheiluvalmisteet',
                       'juomat/energia--ja-urheilujuomat/energiajuomat'
                       ]
 
 store_locations = ['Tampere', 'Pirkkala', 'Lempäälä', 'Nokia']
+
+start0 = time.perf_counter()
 
 try:
     with open('nutritional_content_data.json', 'r') as file:
@@ -242,6 +257,13 @@ try:
 except IOError:
     print("Could not open product price data file. Using empty dictionary.")
     product_price_dict = {}
+
+try:
+    with open('discounted_product_prices_data.json', 'r') as file2:
+        discounted_product_price_dict = json.load(file2)
+except IOError:
+    print("Could not open product price data file. Using empty dictionary.")
+    discounted_product_price_dict = {}
 
 today = date.today()
 
@@ -307,7 +329,7 @@ counter = 0
 
 while counter < number_of_stores:
     start = time.perf_counter()
-    store_pbar.update(1)
+    store_pbar.update(counter)
     wait = WebDriverWait(driver, 10)
     try:
         store_list_element = wait.until(EC.visibility_of_element_located((By.XPATH, "//ul[@data-component='store-list']")))
@@ -319,7 +341,7 @@ while counter < number_of_stores:
                 break
             store_list_container = driver.find_element(By.XPATH, "//div[starts-with(@class, 'StoreSelector__StyledVerticalScrollAwareContainer')]")
             store_list_container.click()
-            time.sleep(random.uniform(1, 2))
+            time.sleep(random.uniform(0, 1))
             store_list_container.send_keys(Keys.PAGE_DOWN)
             store_list_container.send_keys(Keys.PAGE_DOWN)
             store_list_container.send_keys(Keys.PAGE_DOWN)
@@ -363,7 +385,7 @@ while counter < number_of_stores:
             last_list_len = len(product_cards)
             while True:
                 driver.execute_script("arguments[0].scrollIntoView()", product_cards[-1])
-                time.sleep(random.uniform(3, 5))
+                time.sleep(random.uniform(2, 3))
                 product_cards = driver.find_elements(By.XPATH, "//ul[@data-testid='product-search-results']//li[@data-testid='product-card']")
                 new_list_len = len(product_cards)
                 if new_list_len == last_list_len:
@@ -376,7 +398,7 @@ while counter < number_of_stores:
         wait = WebDriverWait(driver, 3)
         try:
             products_element = wait.until(EC.visibility_of_element_located((By.XPATH, "//ul[@data-testid='product-search-results']")))
-            product_cards = products_element.find_elements(By.XPATH, ".//li[@data-testid='product-card']")
+            product_cards = products_element.find_elements(By.XPATH, ".//div[starts-with(@class, 'ProductCardDiscount__Badge') or @data-testid='product-normal-price']//ancestor::li")
         except TimeoutException:
             print("No products found in", store_name, "for category", shop_category, "after scrolling")
             continue
@@ -397,12 +419,13 @@ while counter < number_of_stores:
                         continue
                     ean_code = ean_code_string[:hyphen_index] if hyphen_index != -1 else ean_code_string
 
-                    discount_badge_elements = card.find_elements(By.XPATH, ".//div[starts-with(@class, 'ProductCard__Discount')]")
-                    normal_price_elements = card.find_elements(By.XPATH, ".//div[@data-testid='product-normal-price']")
-                    if len(discount_badge_elements) > 0 or len(normal_price_elements) > 0:
-                        discount = 'Yes'
-                    else:
-                        discount = 'No'
+                    #discount_badge_elements = card.find_elements(By.XPATH, ".//div[starts-with(@class, 'ProductCardDiscount__Text')]")
+                    #normal_price_elements = card.find_elements(By.XPATH, ".//div[@data-testid='product-normal-price']")
+                    #if len(discount_badge_elements) > 0 or len(normal_price_elements) > 0:
+                        #discount = 'Yes'
+                    #else:
+                        #discount = 'No'
+                    discount = 'Yes'
                     
                 except Exception as e:
                     print("Could not get product url or EAN code for", card.text, e)
@@ -499,6 +522,8 @@ while counter < number_of_stores:
                     product_price_dict[ean_code]['Store'] = store_name
 
                 #if discount == 'Yes' and product_price_dict[ean_code].get('Discount valid until', 'Unknown') == 'Unknown':
+
+                discounted_product_price_dict[ean_code] = product_price_dict[ean_code]
                    
 
             else:
@@ -660,8 +685,9 @@ while counter < number_of_stores:
                 time.sleep(random.uniform(2, 3))
 
         url_pbar = tqdm(total=len(product_urls), desc="Scraping URLs")
+        url_counter = 0
         for url, ean in product_urls.items():
-            url_pbar.update(1)
+            url_pbar.update(url_counter)
             if url is not None:
                 try:
                     driver.get(url)
@@ -776,28 +802,28 @@ while counter < number_of_stores:
                     unit_price = 999.999
                     unit_type = 'Unknown'
 
-            normal_price_elements = driver.find_elements(By.XPATH, "//h1[@data-testid='product-name']//following-sibling::div//div[@data-testid='product-normal-price']")
-            if len(normal_price_elements) > 0:
-                discount = 'Yes'
-                valid_during_elements = driver.find_elements(By.XPATH, "//h1[@data-testid='product-name']//following::div[starts-with(@class, 'ProductSidebarContent__Info') and contains(translate(text(), 'VOIMASSA', 'voimassa'), 'voimassa')]")
-                if len(valid_during_elements) > 0:
-                    valid_during_string = valid_during_elements[0].text
-                    
-                    search_res = re.findall(r'(\d{1,2})\.(\d{1,2})(?:\.(\d{4}))?', valid_during_string)
-                    valid_starting_string = '.'.join([part for part in search_res[0] if part])
-                    valid_until_string = '.'.join([part for part in search_res[1] if part])
-
-                    valid_starting = valid_starting_string if len(valid_starting_string.split('.')) == 3 else valid_starting_string + '.' + str(today.year) if len(valid_starting_string.split('.')) == 2 else 'Unknown'
-
-                    valid_until = valid_until_string if len(valid_until_string.split('.')) == 3 else valid_until_string + '.' + str(today.year) if len(valid_until_string.split('.')) == 2 else 'Unknown'
+            #normal_price_elements = driver.find_elements(By.XPATH, "//h1[@data-testid='product-name']//following-sibling::div//div[@data-testid='product-normal-price']")
+            #if len(normal_price_elements) > 0:
+            discount = 'Yes'
+            valid_during_elements = driver.find_elements(By.XPATH, "//h1[@data-testid='product-name']//following::div[starts-with(@class, 'ProductSidebarContent__Info') and contains(translate(text(), 'VOIMASSA', 'voimassa'), 'voimassa')]")
+            if len(valid_during_elements) > 0:
+                valid_during_string = valid_during_elements[0].text
                 
-                else:
-                    valid_starting = 'Unknown'
-                    valid_until = 'Unknown'
+                search_res = re.findall(r'(\d{1,2})\.(\d{1,2})(?:\.(\d{4}))?', valid_during_string)
+                valid_starting_string = '.'.join([part for part in search_res[0] if part])
+                valid_until_string = '.'.join([part for part in search_res[1] if part])
+
+                valid_starting = valid_starting_string if len(valid_starting_string.split('.')) == 3 else valid_starting_string + '.' + str(today.year) if len(valid_starting_string.split('.')) == 2 else 'Unknown'
+
+                valid_until = valid_until_string if len(valid_until_string.split('.')) == 3 else valid_until_string + '.' + str(today.year) if len(valid_until_string.split('.')) == 2 else 'Unknown'
+            
             else:
-                discount = 'No'
                 valid_starting = 'Unknown'
                 valid_until = 'Unknown'
+            #else:
+                #discount = 'No'
+                #valid_starting = 'Unknown'
+                #valid_until = 'Unknown'
 
             if product_price_dict.get(ean_code, 'Unknown') != 'Unknown':
                 if product_price_dict[ean_code].get('Price per Unit', 'Unknown') != 'Unknown':
@@ -865,12 +891,11 @@ while counter < number_of_stores:
                     driver.execute_script("arguments[0].scrollIntoView()", nutritional_content_header)
                     time.sleep(random.uniform(1, 2))
                     nutritional_content_header.click()
-                    time.sleep(random.uniform(1, 2))
+                    time.sleep(random.uniform(0, 1))
                 except TimeoutException:
                     print()
                     print("Nutritional content header not found for", product_name)
                     product_price_dict[ean_code].update(nutritional_content_dict[ean_code])
-                    time.sleep(random.uniform(1, 2))
                     continue
 
                 keys_list = []
@@ -941,38 +966,48 @@ while counter < number_of_stores:
                 nutritional_content_dict[ean_code]['Nutritional Value per'] = unit_size
                 nutritional_content_dict[ean_code].update(kv_pairs)
                 product_price_dict[ean_code].update(nutritional_content_dict[ean_code])
-
+                
+            discounted_product_price_dict[ean_code] = product_price_dict[ean_code]
             time.sleep(random.uniform(1, 2))
+            url_counter += 1
 
         url_pbar.close()
 
-        try:
-            # Serializing json
-            nutritional_content_json = json.dumps(nutritional_content_dict, indent=4)
-            # Writing to json
-            with open("nutritional_content_data.json", "w") as outfile:
-                outfile.write(nutritional_content_json)
-        except Exception as e:
-            print("Could not write nutritional content data to JSON file", e)
-
-        try:
-            product_price_json = json.dumps(product_price_dict, indent=4)
-            with open("product_prices_data.json", "w") as outfile:
-                outfile.write(product_price_json)
-        except Exception as e:
-            print("Could not write product price data to JSON file", e)
-
     end = time.perf_counter()
-    store_pbar.update(1)
-    print()
+
     print(f"Finished scraping store {counter} of {number_of_stores} - {store_name} in {round((end - start) / 60, 2)} minutes")
-    print()
+
+    try:
+        # Serializing json
+        nutritional_content_json = json.dumps(nutritional_content_dict, indent=4)
+        # Writing to json
+        with open("nutritional_content_data.json", "w") as outfile:
+            outfile.write(nutritional_content_json)
+    except Exception as e:
+        print("Could not write nutritional content data to JSON file", e)
+
+    try:
+        product_price_json = json.dumps(product_price_dict, indent=4)
+        with open("product_prices_data.json", "w") as outfile:
+            outfile.write(product_price_json)
+    except Exception as e:
+        print("Could not write product price data to JSON file", e)
+
     driver.get("https://www.k-ruoka.fi/?kaupat&kauppahaku=Tampere&ketju=kcitymarket&ketju=ksupermarket")
 
 store_pbar.close()
+end2 = time.perf_counter()
+print("Finished scraping all of", number_of_stores, "in", round((end2 - 0) / 60, 2), "minutes") 
+
+try:
+    discounted_product_price_json = json.dumps(discounted_product_price_dict, indent=4)
+    with open("discounted_product_prices_data.json", "w") as outfile:
+        outfile.write(discounted_product_price_json)
+except Exception as e:
+    print("Could not write discounted products price data to JSON file", e)
 
 current_time = datetime.now()
-file_name = f"product_prices_kruoka_{current_time.strftime('%d')}_{current_time.strftime('%b')}.xlsx"
+file_name = f"discounted_product_prices_kruoka_{current_time.strftime('%d')}_{current_time.strftime('%b')}.xlsx"
 
 for ean, product_data in product_price_dict.items():
     portion_size_string = product_data.get('Nutritional Value per', 'Unknown')
