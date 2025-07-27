@@ -284,13 +284,20 @@ def run_scraper(selected_categories, store_locations):
         exit()
 
     print()
-    store_pbar = tqdm(total=number_of_stores, desc="Scraping stores")
+    store_progress_text = st.empty()
+    store_progress_bar = st.progress(0)
+    category_progress_text = st.empty()
+    category_progress_bar = st.progress(0)
+    product_progress_text = st.empty()
+    product_progress_bar = st.progress(0)
+    url_progress_text = st.empty()
+    url_progress_bar = st.progress(0)
 
     counter = 0
     start0 = time.perf_counter()
     while counter < number_of_stores:
+        store_progress_text.text(f"Scraping store {counter+1} of {number_of_stores}")
         start = time.perf_counter()
-        store_pbar.update(counter)
         wait = WebDriverWait(driver, 10)
         try:
             store_list_element = wait.until(EC.visibility_of_element_located((By.XPATH, "//ul[@data-component='store-list']")))
@@ -318,6 +325,7 @@ def run_scraper(selected_categories, store_locations):
             if store_location not in store_locations:
                 print(f"Skipping store {counter + 1} - {store_name} as {store_location} is not in the specified locations")
                 counter += 1
+                store_progress_bar.progress(int((counter / number_of_stores) * 100))
                 continue
 
             store = stores[counter].find_element(By.XPATH, f".//button[@data-select-store='{store_name}']")
@@ -328,15 +336,22 @@ def run_scraper(selected_categories, store_locations):
             time.sleep(random.uniform(1, 2))
 
             counter += 1
+            store_progress_bar.progress(int((counter / number_of_stores) * 100))
 
         except TimeoutException:
             print("Store list element not found or not visible")
             counter += 1
+            store_progress_bar.progress(int((counter / number_of_stores) * 100))
             continue
         
         product_urls = {}
-        for shop_category in tqdm(selected_categories, desc="Scraping categories"):
-            driver.get(f"https://www.k-ruoka.fi/kauppa/tuotehaku/{shop_category}")
+        category_progress_bar.progress(0)
+        total_categories = len(selected_categories)
+        category_counter = 0
+
+        for product_category in selected_categories:
+            category_progress_text.text(f"Scraping category {category_counter+1} of {total_categories}: {product_category}")
+            driver.get(f"https://www.k-ruoka.fi/kauppa/tuotehaku/{product_category}")
             time.sleep(random.uniform(2, 4))
             
             wait = WebDriverWait(driver, 10)
@@ -353,7 +368,9 @@ def run_scraper(selected_categories, store_locations):
                         break
                     last_list_len = new_list_len
             except TimeoutException:
-                print("No products found in", store_name, "for category", shop_category)
+                print("No products found in", store_name, "for category", product_category)
+                category_counter += 1
+                category_progress_bar.progress(int((category_counter / total_categories) * 100))
                 continue
             
             wait = WebDriverWait(driver, 3)
@@ -361,10 +378,16 @@ def run_scraper(selected_categories, store_locations):
                 products_element = wait.until(EC.visibility_of_element_located((By.XPATH, "//ul[@data-testid='product-search-results']")))
                 product_cards = products_element.find_elements(By.XPATH, ".//div[starts-with(@class, 'ProductCardDiscount__Badge') or @data-testid='product-normal-price']//ancestor::li")
             except TimeoutException:
-                print("No products found in", store_name, "for category", shop_category, "after scrolling")
+                print("No products found in", store_name, "for category", product_category, "after scrolling")
+                category_counter += 1
+                category_progress_bar.progress(int((category_counter / total_categories) * 100))
                 continue
             
-            for card in tqdm(product_cards, desc="Scraping products"):
+            total_products = len(product_cards)
+            product_progress_bar.progress(0)
+            product_counter = 0
+            for card in product_cards:
+                product_progress_text.text(f"Scraping product {product_counter+1} of {total_products}")
                 url_elements = card.find_elements(By.XPATH, ".//a[@data-testid='product-link']")
                 if len(url_elements) > 0:
                     try:
@@ -377,6 +400,8 @@ def run_scraper(selected_categories, store_locations):
                         else:
                             print("EAN code is an empty string for", product_name)
                             product_urls.update({url: 'Unknown'})
+                            product_counter += 1
+                            product_progress_bar.progress(int((product_counter / total_products) * 100))
                             continue
                         ean_code = ean_code_string[:hyphen_index] if hyphen_index != -1 else ean_code_string
 
@@ -390,6 +415,8 @@ def run_scraper(selected_categories, store_locations):
                         
                     except Exception as e:
                         print("Could not get product url or EAN code for", card.text, e)
+                        product_counter += 1
+                        product_progress_bar.progress(int((product_counter / total_products) * 100))
                         continue
 
                     if nutritional_content_dict.get(ean_code, 'Unknown') != 'Unknown':
@@ -513,6 +540,8 @@ def run_scraper(selected_categories, store_locations):
                                 
                             except Exception as e:
                                 print("Could not click 'Näytä tuotteet' button for", card.text, e)
+                                product_counter += 1
+                                product_progress_bar.progress(int((product_counter / total_products) * 100))
                                 continue
 
                     wait = WebDriverWait(driver, 5)
@@ -521,6 +550,8 @@ def run_scraper(selected_categories, store_locations):
                         product_elements = driver.find_elements(By.XPATH, "//ul[@data-testid='offer-products']//li[@data-testid='product-card']")
                     except TimeoutException:
                         print("Product elements not found or not visible for", card.text)
+                        product_counter += 1
+                        product_progress_bar.progress(int((product_counter / total_products) * 100))
                         continue
 
                     for product in product_elements:
@@ -645,20 +676,32 @@ def run_scraper(selected_categories, store_locations):
                     driver.find_element(By.XPATH, "//button[@title='Sulje']").click()
                     time.sleep(random.uniform(2, 3))
 
-        url_pbar = tqdm(total=len(product_urls), desc="Scraping URLs")
+                product_counter += 1
+                product_progress_bar.progress(int((product_counter / total_products) * 100))
+
+            category_counter += 1
+            category_progress_bar.progress(int((category_counter / total_categories) * 100))
+
+        url_progress_bar.progress(0)
+        total_urls = len(product_urls)
         url_counter = 0
+
         for url, ean in product_urls.items():
-            url_counter += 1
-            url_pbar.update(url_counter)
+            url_progress_text.text(f"Scraping product details {url_counter} of {total_urls}")
+
             if url is not None:
                 try:
                     driver.get(url)
                     time.sleep(random.uniform(1, 4))
                 except Exception as e:
                     print("Could not open link")
+                    url_counter += 1
+                    url_progress_bar.progress(int((url_counter / total_urls) * 100))
                     continue
             else:
                 print("Invalid URL, skipping")
+                url_counter += 1
+                url_progress_bar.progress(int((url_counter / total_urls) * 100))
                 continue
 
             try:
@@ -676,6 +719,8 @@ def run_scraper(selected_categories, store_locations):
                     category = 'Unknown'
             except TimeoutException:
                 print("Product name not found for", url)
+                url_counter += 1
+                url_progress_bar.progress(int((url_counter / total_urls) * 100))
                 continue
 
             if ean == 'Unknown' or ean == '':
@@ -686,6 +731,8 @@ def run_scraper(selected_categories, store_locations):
                     time.sleep(random.uniform(1, 2))
                 except TimeoutException:
                     print("Product info header not found for", product_name)
+                    url_counter += 1
+                    url_progress_bar.progress(int((url_counter / total_urls) * 100))
                     continue
 
                 try:
@@ -696,6 +743,8 @@ def run_scraper(selected_categories, store_locations):
                     time.sleep(random.uniform(1, 2))
                 except TimeoutException:
                     print("EAN code not found for", product_name)
+                    url_counter += 1
+                    url_progress_bar.progress(int((url_counter / total_urls) * 100))
                     continue
             else:
                 ean_code = ean
@@ -923,6 +972,8 @@ def run_scraper(selected_categories, store_locations):
                     except Exception as e:
                         print("Could not get nutritional content for", product_name, e)
                         product_price_dict[ean_code].update(nutritional_content_dict[ean_code])
+                        url_counter += 1
+                        url_progress_bar.progress(int((url_counter / total_urls) * 100))
                         continue
 
                 nutritional_content_dict[ean_code]['Nutritional Value per'] = unit_size
@@ -932,9 +983,11 @@ def run_scraper(selected_categories, store_locations):
             discounted_product_price_dict[ean_code] = product_price_dict[ean_code]
             time.sleep(random.uniform(1, 2))
 
-        url_pbar.close()
+            url_counter += 1
+            url_progress_bar.progress(int((url_counter / total_urls) * 100))
 
         end = time.perf_counter()
+        url_progress_text.text(f"Finished scraping store {counter} of {number_of_stores} - {store_name} in {round((end - start) / 60, 2)} minutes - Total elapsed time: {round((end - start0) / 60, 2)} minutes")
 
         print(f"Finished scraping store {counter} of {number_of_stores} - {store_name} in {round((end - start) / 60, 2)} minutes")
 
@@ -956,10 +1009,14 @@ def run_scraper(selected_categories, store_locations):
 
         driver.get("https://www.k-ruoka.fi/?kaupat&kauppahaku=Tampere&ketju=kcitymarket&ketju=ksupermarket")
 
-    store_pbar.close()
     end2 = time.perf_counter()
     print("Finished scraping all of", number_of_stores, "in", round((end2 - start0) / 60, 2), "minutes")
     driver.quit()
+    store_progress_text.text("Finished all stores.")
+    store_progress_bar.empty()
+    category_progress_bar.empty()
+    product_progress_bar.empty()
+    url_progress_bar.empty()
 
 def postprocess_and_save(discounted_product_price_dict):
     try:
@@ -1000,6 +1057,8 @@ def postprocess_and_save(discounted_product_price_dict):
 
     discounted_product_data_df.index.name = 'EAN-code'
 
+    discounted_product_data_df = discounted_product_data_df.loc[:, ['Name', 'Category', 'Store', 'Price per Unit', 'Euroa per 100g Proteiinia', 'Rasva', 'josta tyydyttynyttä', 'Hiilihydraatit', 'josta sokereita', 'Proteiini', 'Suola', 'Discount valid starting', 'Discount valid until']]
+
     with pd.ExcelWriter(f"{file_name}") as writer:
         discounted_product_data_df.to_excel(writer, sheet_name='Products')
 
@@ -1031,8 +1090,8 @@ def preprocess_and_save():
     for ean in list(product_price_dict.keys()):
         product_price_dict[ean].pop('Euroa per 100g Proteiinia', None)
         details = product_price_dict[ean]
-        discount_until = details.get('Discount valid until', 'Unknown')
-        if discount_until != 'Unknown':
+        discount_until = details.get('Discount valid until', None)
+        if discount_until != None:
             if date(today.year, today.month, today.day) <= date(int(product_price_dict[ean]['Discount valid until'].split('.')[2]), int(product_price_dict[ean]['Discount valid until'].split('.')[1]), int(product_price_dict[ean]['Discount valid until'].split('.')[0])):   
                 continue
             else:
@@ -1045,9 +1104,9 @@ def preprocess_and_save():
 
     for ean in list(discounted_product_price_dict.keys()):
         details = discounted_product_price_dict[ean]
-        discount_until = details.get('Discount valid until', 'Unknown')
+        discount_until = details.get('Discount valid until', None)
         discounted_product_price_dict[ean].pop('Euroa per 100g Proteiinia', None)
-        if discount_until != 'Unknown':
+        if discount_until != None:
             if date(today.year, today.month, today.day) <= date(int(discounted_product_price_dict[ean]['Discount valid until'].split('.')[2]), int(discounted_product_price_dict[ean]['Discount valid until'].split('.')[1]), int(discounted_product_price_dict[ean]['Discount valid until'].split('.')[0])):   
                 continue
             else:
