@@ -13405,7 +13405,8 @@
         "Lactose Free": "Yes",
         "Syd\u00e4nmerkki": "No",
         "Hyv\u00e4\u00e4 Suomesta": "No",
-        "Organic": "No"
+        "Organic": "No",
+        "Category": "Kinkut ja leikkeleet"
     },
     "6405366002554": {
         "Name": "Helsingin Makkaratehdas nakki 240g chorizo",
@@ -45965,7 +45966,8 @@
         "Lactose Free": "No",
         "Syd\u00e4nmerkki": "No",
         "Hyv\u00e4\u00e4 Suomesta": "No",
-        "Organic": "No"
+        "Organic": "No",
+        "Category": "Nauta"
     },
     "6408430340965": {
         "Name": "Valio Oltermanni v\u00e4h. suolainen 900g",
@@ -55983,7 +55985,8 @@
         "Lactose Free": "Yes",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "Yes"
+        "Hyv\u00e4\u00e4 Suomesta": "Yes",
+        "Category": "Juustot leiv\u00e4n p\u00e4\u00e4lle"
     },
     "6407204001668": {
         "Name": "Ahvenanmaan Juhlajuusto 500 g",
@@ -97638,7 +97641,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Jogurtit"
     },
     "6405855000641": {
         "Name": "Helsingin Meijeriliike luonnonjogurtti 150g tyrni",
@@ -97741,7 +97745,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Jogurtit"
     },
     "6416961004768": {
         "Name": "Porlammin Ahonlaita vadelmajogurtti 400g",
@@ -111206,7 +111211,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Rahkat, vanukkaat ja v\u00e4lipalat"
     },
     "6430081490690": {
         "Name": "Oddlygood Dessert 130g banoffee gluteeniton",
@@ -112050,7 +112056,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "Yes"
+        "Hyv\u00e4\u00e4 Suomesta": "Yes",
+        "Category": "Jauheliha"
     },
     "2363060900009": {
         "Name": "Kivikyl\u00e4n Porsaan kylkiviipale n. 400 g",
@@ -142359,7 +142366,8 @@
         "Lactose Free": "Yes",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Ruoka- ja herkuttelujuustot"
     },
     "2000324400003": {
         "Name": "Tete de Moine Sveitsi",
@@ -144263,7 +144271,8 @@
         "Lactose Free": "Yes",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "Yes"
+        "Hyv\u00e4\u00e4 Suomesta": "Yes",
+        "Category": "Ruoka- ja herkuttelujuustot"
     },
     "2000305000000": {
         "Name": "Shampanja Cheddar",
@@ -144429,7 +144438,8 @@
         "Lactose Free": "Yes",
         "Organic": "Yes",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Ruoka- ja herkuttelujuustot"
     },
     "2354841100008": {
         "Name": "Herkkujuustolan Metsuri pala n.300g",
@@ -144599,7 +144609,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Ruoka- ja herkuttelujuustot"
     },
     "7316150976052": {
         "Name": "Fontana feta 1,5/0,8kg kuutiotu",
@@ -144845,7 +144856,8 @@
         "Lactose Free": "Yes",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Ruoka- ja herkuttelujuustot"
     },
     "3523230011990": {
         "Name": "Europicnic Mozzarellaviipale (13g, 68mm) laktoositon 2x5000g pakaste",
@@ -145134,7 +145146,8 @@
         "Lactose Free": "Yes",
         "Organic": "Yes",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Ruoka- ja herkuttelujuustot"
     },
     "6407860061471": {
         "Name": "Atria Kunnon Arki lihapiirakka 9kpl 900g",
@@ -166344,7 +166357,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet"
     },
     "7311310038397": {
         "Name": "Santa Maria Dip Nacho Cheese Style 250g",
@@ -166379,7 +166393,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Texmex"
     },
     "6410405301611": {
         "Name": "Pirkka tomaattisose 200g",
@@ -166416,7 +166431,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Texmex"
     },
     "6410405117915": {
         "Name": "Pirkka tacokastike mieto 230g",
@@ -166544,7 +166560,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Texmex"
     },
     "6410405345486": {
         "Name": "Pirkka chunky salsa 300g Medium",
@@ -166562,7 +166579,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Texmex"
     },
     "6410402001965": {
         "Name": "Pirkka kurkkuviipaleet mausteliemess\u00e4 680g/360g",
@@ -166635,7 +166653,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet"
     },
     "6410400046241": {
         "Name": "Pirkka vihre\u00e4t oliivit paprikat\u00e4ytteell\u00e4 350g/200g",
@@ -166672,7 +166691,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet"
     },
     "8720182406651": {
         "Name": "Knorr Spaghetteria 154g carbonara",
@@ -166708,7 +166728,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kuivaruoka-ateriat ja -ainekset"
     },
     "6410405048622": {
         "Name": "Pirkka salsadippi vahva 315g",
@@ -166726,7 +166747,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Texmex"
     },
     "8005110551215": {
         "Name": "Mutti aromaattinen pizzakastike 400g",
@@ -166780,7 +166802,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet"
     },
     "8720182572905": {
         "Name": "Knorr Ateria-aines Italian Lasagnette 270g",
@@ -166798,7 +166821,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kuivaruoka-ateriat ja -ainekset"
     },
     "6410405217714": {
         "Name": "Pirkka pasta carbonara 175 g",
@@ -166816,7 +166840,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kuivaruoka-ateriat ja -ainekset"
     },
     "7322550038306": {
         "Name": "Bl\u00e5 Band laktoositon Italian Pata Spagetti-kasvis-mausteseos 150g",
@@ -166834,7 +166859,8 @@
         "Lactose Free": "Yes",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kuivaruoka-ateriat ja -ainekset"
     },
     "8005110170423": {
         "Name": "Mutti Tomaattimurska basilikalla 400g",
@@ -166871,7 +166897,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kuivaruoka-ateriat ja -ainekset"
     },
     "7311312002143": {
         "Name": "Santa Maria Tacokastike Hot 230g",
@@ -166889,7 +166916,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Texmex"
     },
     "6410405124579": {
         "Name": "Pirkka aurinkokuivatut tomaattisuikaleet \u00f6ljyss\u00e4 190g/100g",
@@ -166944,7 +166972,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet"
     },
     "6410402008551": {
         "Name": "Pirkka punainen pesto 185g",
@@ -166962,7 +166991,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet"
     },
     "8076809523561": {
         "Name": "Barilla Classico 400g pastakastike",
@@ -166980,7 +167010,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet"
     },
     "6424908115033": {
         "Name": "Felix Amerikkalainen kurkkuviipaleita makeassa mausteliemess\u00e4 410g/215g",
@@ -167382,7 +167413,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kuivaruoka-ateriat ja -ainekset"
     },
     "6410402015818": {
         "Name": "Pirkka vihre\u00e4t oliivit valkosipulit\u00e4ytteell\u00e4 235g/140g",
@@ -167438,7 +167470,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet"
     },
     "6424908463509": {
         "Name": "Felix maustekurkkuviipale 560g/300g viipaloituja kurkkuja mausteliemess\u00e4",
@@ -167492,7 +167525,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kuivaruoka-ateriat ja -ainekset"
     },
     "6410405200075": {
         "Name": "Pirkka perunamuusijauhe 2x105g maidoton",
@@ -167581,7 +167615,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kuivaruoka-ateriat ja -ainekset"
     },
     "6410405311719": {
         "Name": "K-Menu hedelm\u00e4cocktail sokeriliemess\u00e4 820g/500g",
@@ -167727,7 +167762,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Texmex"
     },
     "8410076400017": {
         "Name": "Old El Paso 340g Thick and Chunky Original Salsa Medium",
@@ -167744,7 +167780,8 @@
         "Lactose Free": "Yes",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Texmex"
     },
     "6410405227065": {
         "Name": "Pirkka Luomu paseerattu tomaatti 500g",
@@ -167817,7 +167854,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet"
     },
     "8076809513388": {
         "Name": "Barilla pastakastike 400g arrabbiata",
@@ -167835,7 +167873,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet"
     },
     "8005110517006": {
         "Name": "Mutti pastakastike Rossoro-tomaateilla ja basilikalla 400g",
@@ -167853,7 +167892,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet"
     },
     "7311312000941": {
         "Name": "Santa Maria Pineapple Salsa medium ananassalsa 230g",
@@ -167907,7 +167947,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Keitot ja keittoainekset"
     },
     "6410405118813": {
         "Name": "Pirkka pizzakastike 390g",
@@ -167925,7 +167966,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet"
     },
     "7350115940191": {
         "Name": "El Taco Truck Jalapeno Lime Mayo majoneesi 200ml",
@@ -167942,7 +167984,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Texmex"
     },
     "8720182408587": {
         "Name": "Knorr Spaghetteria 160g Spinaci",
@@ -167978,7 +168021,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet"
     },
     "7322550035978": {
         "Name": "Bl\u00e5 Band v\u00e4h\u00e4laktoosinen Kanarisotto riisi-kasvis-mausteseos 172g",
@@ -167996,7 +168040,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kuivaruoka-ateriat ja -ainekset"
     },
     "8720182570499": {
         "Name": "Knorr Ateria-aines Italian Lasagne 262g",
@@ -168014,7 +168059,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kuivaruoka-ateriat ja -ainekset"
     },
     "8005110000775": {
         "Name": "Mutti pastakastike Rossoro-tomaateilla ja Parmigiano Reggiano 400g",
@@ -168032,7 +168078,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet"
     },
     "6410405306166": {
         "Name": "Pirkka Parhaat Guacamole style topping 260g",
@@ -168086,7 +168133,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet"
     },
     "4002359020988": {
         "Name": "Dolmio Bolognesekastike Tomato & Basil 450g",
@@ -168104,7 +168152,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet"
     },
     "6410405324641": {
         "Name": "Pirkka Parhaat tomaatti-vuohenjuustokeitto 390g",
@@ -168122,7 +168171,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Keitot ja keittoainekset"
     },
     "6410405202093": {
         "Name": "Pirkka Parhaat kivelliset kreikkalaiset kalamataoliivit 350g/200g",
@@ -168251,7 +168301,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet"
     },
     "6409536651016": {
         "Name": "Jalostaja Juustoinen savuporokeitto 550ml",
@@ -168287,7 +168338,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet"
     },
     "4002359021077": {
         "Name": "Dolmio Bolognesekastike Valkosipuli 450g",
@@ -168305,7 +168357,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet"
     },
     "8410076420121": {
         "Name": "Old El Paso Salsa Dip 312g medium",
@@ -168323,7 +168376,8 @@
         "Lactose Free": "Yes",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Texmex"
     },
     "7311312000897": {
         "Name": "Santa Maria Chunky Salsa Hot tulinen salsakastike 230g",
@@ -168359,7 +168413,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kuivaruoka-ateriat ja -ainekset"
     },
     "6424908461352": {
         "Name": "Felix Maku viipaloituja kurkkuja mausteliemess\u00e4 840g/480g",
@@ -168595,7 +168650,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet"
     },
     "8005110170461": {
         "Name": "Mutti Tomaattimurska valkosipulilla 400g",
@@ -168723,7 +168779,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kuivaruoka-ateriat ja -ainekset"
     },
     "8001060007789": {
         "Name": "Sacla genovese pestokastike 90g",
@@ -168777,7 +168834,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet"
     },
     "6410405340139": {
         "Name": "K-Menu ananaspalat ananast\u00e4ysmehussa 567g/340g",
@@ -168811,7 +168869,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kuivaruoka-ateriat ja -ainekset"
     },
     "7310240661682": {
         "Name": "Felix Perunamuusi 6 annosta 220g",
@@ -168901,7 +168960,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kuivaruoka-ateriat ja -ainekset"
     },
     "6410402015832": {
         "Name": "Pirkka vihre\u00e4t oliivit jalapenot\u00e4ytteell\u00e4 235g/142g",
@@ -168992,7 +169052,8 @@
         "Lactose Free": "Yes",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Texmex"
     },
     "6416710010484": {
         "Name": "Filos Kivet\u00f6n Kalamata-oliivi 200g/100g",
@@ -169046,7 +169107,8 @@
         "Lactose Free": "Yes",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kuivaruoka-ateriat ja -ainekset"
     },
     "7322550030256": {
         "Name": "Bl\u00e5 Band b\u00e9arnaisekastike 3x32g",
@@ -169100,7 +169162,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kuivaruoka-ateriat ja -ainekset"
     },
     "6408641203394": {
         "Name": "Pirkka paprika-cashewpesto 135g",
@@ -169191,7 +169254,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kuivaruoka-ateriat ja -ainekset"
     },
     "7322550037514": {
         "Name": "Bl\u00e5 Band L\u00e4mmin Kuppi 3x20g suurust kana",
@@ -169227,7 +169291,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Keitot ja keittoainekset"
     },
     "6409536650415": {
         "Name": "Jalostaja Mausteinen Meksikon pata 190g",
@@ -169263,7 +169328,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Texmex"
     },
     "6417808454111": {
         "Name": "Felix pitkitt\u00e4in viipaloituja kurkkuja mausteliemess\u00e4 460g/240g",
@@ -169397,7 +169463,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Texmex"
     },
     "8714100695814": {
         "Name": "Knorr Pippurikastike 300ml",
@@ -169486,7 +169553,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet"
     },
     "6416710020797": {
         "Name": "Filos Deluxe vihre\u00e4 oliivi 400/190g kivet\u00f6n",
@@ -169523,7 +169591,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kuivaruoka-ateriat ja -ainekset"
     },
     "7311312000989": {
         "Name": "Santa Maria Garlic Salsa Medium valkosipulilla maustettu salsakastike 230g",
@@ -169686,7 +169755,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet"
     },
     "6432700100676": {
         "Name": "Sauvon Suolakurkkua 2,9/1,6 kg",
@@ -169798,7 +169868,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kuivaruoka-ateriat ja -ainekset"
     },
     "6410405167736": {
         "Name": "Pirkka lihapulla-ainekset 60g",
@@ -170142,7 +170213,8 @@
         "Lactose Free": "Yes",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kuivaruoka-ateriat ja -ainekset"
     },
     "6409536650484": {
         "Name": "Jalostaja Havaijin pata 195g",
@@ -170234,7 +170306,8 @@
         "Lactose Free": "Yes",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kuivaruoka-ateriat ja -ainekset"
     },
     "6409536651030": {
         "Name": "Jalostaja Kanakeitto 550ml",
@@ -170288,7 +170361,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "Yes",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kuivaruoka-ateriat ja -ainekset"
     },
     "6409536650934": {
         "Name": "Jalostaja Nakkimestarin pata 165g",
@@ -170360,7 +170434,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Texmex"
     },
     "6410405314444": {
         "Name": "Pirkka Nakkipata-aines 150g",
@@ -170414,7 +170489,8 @@
         "Lactose Free": "Yes",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Texmex"
     },
     "8445290641199": {
         "Name": "Maggi Mix Lihapulla ateria-ainekset 70g",
@@ -170432,7 +170508,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "Yes",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kuivaruoka-ateriat ja -ainekset"
     },
     "6416710010453": {
         "Name": "Filos Luomu kivet\u00f6n Kalamata-oliivi 200g/100g",
@@ -170486,7 +170563,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet"
     },
     "6417095303116": {
         "Name": "Indian Salsa 300g Medium",
@@ -170522,7 +170600,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet"
     },
     "7322550037538": {
         "Name": "Bl\u00e5 Band L\u00e4mmin Kuppi 3x23g juust-parsak",
@@ -170758,7 +170837,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet"
     },
     "7322550038405": {
         "Name": "Bl\u00e5 Band laktoositon T\u00e4ysjyv\u00e4 Italian Pata T\u00e4ysjyv\u00e4spagetti-kasvis-mausteseos 150g",
@@ -170884,7 +170964,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Texmex"
     },
     "4002359021053": {
         "Name": "Dolmio Bolognesekastike 675g Mausteinen",
@@ -171026,7 +171107,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kuivaruoka-ateriat ja -ainekset"
     },
     "6410405138378": {
         "Name": "K-Menu kuoritut tomaatit tomaattit\u00e4ysmehussa 400g/240g",
@@ -171191,7 +171273,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kuivaruoka-ateriat ja -ainekset"
     },
     "6410405150264": {
         "Name": "Pirkka Parhaat Meksikolainen salsa Mexicana 230g",
@@ -171261,7 +171344,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kuivaruoka-ateriat ja -ainekset"
     },
     "8005110630408": {
         "Name": "Mutti paseerattu tomaatti 400g",
@@ -171408,7 +171492,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kuivaruoka-ateriat ja -ainekset"
     },
     "8005110519000": {
         "Name": "Mutti pastakastike Rossoro-tomaateilla ja grillatuilla vihanneksilla 400g",
@@ -171426,7 +171511,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet"
     },
     "6410405344076": {
         "Name": "Pirkka Parhaat juustorisotto 200g",
@@ -171623,7 +171709,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet"
     },
     "6430028235407": {
         "Name": "Rooty perunamuusi 320g",
@@ -171676,7 +171763,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kuivaruoka-ateriat ja -ainekset"
     },
     "5000157062673": {
         "Name": "Heinz Kermainen tomaattikeitto 400g",
@@ -171729,7 +171817,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Texmex"
     },
     "6410405345400": {
         "Name": "Pirkka Gazpacho 390g",
@@ -171783,7 +171872,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet"
     },
     "7350115941013": {
         "Name": "El Taco Truck Classic Salsa 215g",
@@ -171892,7 +171982,8 @@
         "Lactose Free": "Yes",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kuivaruoka-ateriat ja -ainekset"
     },
     "8410076420091": {
         "Name": "Old El Paso Salsa Dip 312g hot",
@@ -171927,7 +172018,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet"
     },
     "8714100671504": {
         "Name": "Knorr Snack Pot Napoli 69g",
@@ -171945,7 +172037,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kuivaruoka-ateriat ja -ainekset"
     },
     "4002359020964": {
         "Name": "Dolmio Lasagnekastike Creamy 655g",
@@ -172070,7 +172163,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Texmex"
     },
     "6432700300595": {
         "Name": "Sauvon Sienikuutioita 315/160 g",
@@ -172462,7 +172556,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Texmex"
     },
     "8410076420947": {
         "Name": "Old El Paso Thick \u2019N Chunky Salsa medium 226g",
@@ -172498,7 +172593,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kuivaruoka-ateriat ja -ainekset"
     },
     "6410405306203": {
         "Name": "Pirkka Parhaat Hot Mango Habanero topping 270g",
@@ -172713,7 +172809,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Texmex"
     },
     "6432700200123": {
         "Name": "Sauvon Viipaloituja Herkkusieni\u00e4 250/150 g",
@@ -173124,7 +173221,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Texmex"
     },
     "6410405142634": {
         "Name": "K-Menu Italianpata-ainekset 300g",
@@ -173194,7 +173292,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Texmex"
     },
     "8001060042322": {
         "Name": "Sacla Vegan Pesto 190g Alla Genovese",
@@ -173643,7 +173742,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet"
     },
     "8000320010026": {
         "Name": "Cirio kuoritut luumutomaatit 400g",
@@ -174079,7 +174179,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Texmex"
     },
     "8008343299695": {
         "Name": "Rummo pastakastike 340g bolognese vegetale",
@@ -174097,7 +174198,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet"
     },
     "6410840055674": {
         "Name": "Herkkumaa Minikurkku 330g/190g",
@@ -174187,7 +174289,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet"
     },
     "8711200362431": {
         "Name": "Knorr Snack Pot BIG Mash Potatoes Bacon & Onion 76g",
@@ -174631,7 +174734,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kuivaruoka-ateriat ja -ainekset"
     },
     "6407026001655": {
         "Name": "Set\u00e4mies Jalapenokastike 200ml",
@@ -175102,7 +175206,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet"
     },
     "8715700407197": {
         "Name": "Heinz Tomaattimurska basilikalla ja oreganolla maustettu 390g",
@@ -175410,7 +175515,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet"
     },
     "6426000009814": {
         "Name": "Lagom Kermainen Myskikurpitsakeitto 570g",
@@ -175462,7 +175568,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet"
     },
     "8720182060402": {
         "Name": "Knorr Ateria-aines Chili Con Carne 47 g",
@@ -175625,7 +175732,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kuivaruoka-ateriat ja -ainekset"
     },
     "7311311003097": {
         "Name": "Santa Maria Dip Mix Cheese mausteseos 16g",
@@ -176196,7 +176304,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Kuivaruoka-ateriat ja -ainekset"
     },
     "6432700100461": {
         "Name": "Sauvon Chilikurkkua viipaleina 850/460g",
@@ -176270,7 +176379,8 @@
         "Lactose Free": "No",
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
-        "Hyv\u00e4\u00e4 Suomesta": "No"
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Category": "Texmex"
     },
     "6432700300656": {
         "Name": "Sauvon Sienikuutioita miedossa suolaliemess\u00e4 850/500g",
@@ -222265,5 +222375,299 @@
         "Organic": "No",
         "Syd\u00e4nmerkki": "No",
         "Hyv\u00e4\u00e4 Suomesta": "No"
+    },
+    "2391342400008": {
+        "Name": "HK Viljaporsaan Grillikylki luuton maustettu n. 2 kg",
+        "Category": "Porsas",
+        "Vegan": "No",
+        "Gluten Free": "Yes",
+        "Lactose Free": "Yes",
+        "Organic": "No",
+        "Syd\u00e4nmerkki": "No",
+        "Hyv\u00e4\u00e4 Suomesta": "Yes",
+        "Nutritional Value per": "100 g",
+        "Energia": 300.0,
+        "Rasva": 27.0,
+        "josta tyydyttynytt\u00e4": 10.0,
+        "Hiilihydraatit": 2.0,
+        "josta sokereita": 0.7,
+        "Proteiini": 13.0
+    },
+    "2385220700007": {
+        "Name": "Kalaneuvos tuore kirjolohi superior vakuumipakattu",
+        "Category": "Tuorekala",
+        "Vegan": "No",
+        "Gluten Free": "Yes",
+        "Lactose Free": "Yes",
+        "Organic": "No",
+        "Syd\u00e4nmerkki": "No",
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Nutritional Value per": "100 g",
+        "Energia": 99.0,
+        "Rasva": 6.2,
+        "josta tyydyttynytt\u00e4": 1.2,
+        "Hiilihydraatit": 0.0,
+        "josta sokereita": 0.0,
+        "Proteiini": 10.9,
+        "Suola": 0.09
+    },
+    "8711327672888": {
+        "Name": "Ingman Creamy Brussel Caramel Cookie J\u00e4\u00e4tel\u00f6 850ml/473g",
+        "Category": "J\u00e4\u00e4tel\u00f6t",
+        "Vegan": "No",
+        "Gluten Free": "No",
+        "Lactose Free": "No",
+        "Organic": "No",
+        "Syd\u00e4nmerkki": "No",
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Nutritional Value per": "100 g",
+        "Energia": 255.0,
+        "Rasva": 14.0,
+        "josta tyydyttynytt\u00e4": 6.3,
+        "Hiilihydraatit": 28.0,
+        "josta sokereita": 24.0,
+        "Ravintokuitu": 0.5,
+        "Proteiini": 3.2,
+        "Suola": 0.21
+    },
+    "8711327536791": {
+        "Name": "Ingman j\u00e4\u00e4tel\u00f6pakkaus 900ml Solero",
+        "Category": "J\u00e4\u00e4tel\u00f6t",
+        "Vegan": "No",
+        "Gluten Free": "No",
+        "Lactose Free": "No",
+        "Organic": "No",
+        "Syd\u00e4nmerkki": "No",
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Nutritional Value per": "100 g",
+        "Energia": 161.0,
+        "Rasva": 5.0,
+        "josta tyydyttynytt\u00e4": 4.5,
+        "Hiilihydraatit": 27.0,
+        "josta sokereita": 19.0,
+        "Proteiini": 1.7,
+        "Suola": 0.07
+    },
+    "6418785007086": {
+        "Name": "Rodeo light energiajuoma 0,33l 6-pack",
+        "Category": "Energia- ja urheilujuomat",
+        "Vegan": "No",
+        "Gluten Free": "No",
+        "Lactose Free": "No",
+        "Organic": "No",
+        "Syd\u00e4nmerkki": "No",
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Kofeiini (per 100ml)": 32.0,
+        "Kofeiini (per tuote)": 0,
+        "Nutritional Value per": "100 ml",
+        "Energia": 2.0,
+        "Rasva": 0.0,
+        "josta tyydyttynytt\u00e4": 0.0,
+        "Hiilihydraatit": 0.1,
+        "josta sokereita": 0.1,
+        "Proteiini": 0.0,
+        "Suola": 0.0
+    },
+    "4009301043606": {
+        "Name": "Arla Pro 1,5 kg 25% edam-emmental-mozzarella juustoraaste laktoositon",
+        "Category": "Ruoka- ja herkuttelujuustot",
+        "Vegan": "No",
+        "Gluten Free": "No",
+        "Lactose Free": "Yes",
+        "Organic": "No",
+        "Syd\u00e4nmerkki": "No",
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Nutritional Value per": "100 g",
+        "Energia": 333.0,
+        "Rasva": 25.0,
+        "josta tyydyttynytt\u00e4": 16.5,
+        "Hiilihydraatit": 0.0,
+        "josta sokereita": 0.0,
+        "Proteiini": 27.0,
+        "Suola": 1.3
+    },
+    "6409100070168": {
+        "Name": "Via lohikeitto 300g",
+        "Category": "Valmisruoat ja -keitot",
+        "Vegan": "No",
+        "Gluten Free": "Yes",
+        "Lactose Free": "Yes",
+        "Organic": "No",
+        "Syd\u00e4nmerkki": "No",
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Nutritional Value per": "100 g",
+        "Energia": 89.0,
+        "Rasva": 5.5,
+        "josta tyydyttynytt\u00e4": 0.5,
+        "Hiilihydraatit": 7.3,
+        "josta sokereita": 1.2,
+        "Proteiini": 2.5,
+        "Suola": 0.7
+    },
+    "6409100060879": {
+        "Name": "HK Popsi Nakkipala 3kg",
+        "Category": "Makkarat, nakit ja pekonit",
+        "Vegan": "No",
+        "Gluten Free": "Yes",
+        "Lactose Free": "Yes",
+        "Organic": "No",
+        "Syd\u00e4nmerkki": "No",
+        "Hyv\u00e4\u00e4 Suomesta": "Yes",
+        "Nutritional Value per": "100 g",
+        "Energia": 260.0,
+        "Rasva": 20.0,
+        "josta tyydyttynytt\u00e4": 7.5,
+        "Hiilihydraatit": 5.5,
+        "josta sokereita": 2.0,
+        "Proteiini": 11.0,
+        "Suola": 2.0
+    },
+    "6409290000686": {
+        "Name": "Wursti Yrtti-vsip kyps\u00e4 nakki lampaan- ja sianlihasta 250g",
+        "Category": "Makkarat, nakit ja pekonit",
+        "Vegan": "No",
+        "Gluten Free": "No",
+        "Lactose Free": "No",
+        "Organic": "No",
+        "Syd\u00e4nmerkki": "No",
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Nutritional Value per": "100 g",
+        "Energia": 254.0,
+        "Rasva": 22.0,
+        "josta tyydyttynytt\u00e4": 10.0,
+        "Hiilihydraatit": 1.0,
+        "josta sokereita": 0.5,
+        "Proteiini": 13.0,
+        "Suola": 2.0
+    },
+    "6405346003533": {
+        "Name": "Riitan Herkku sieni-fetapiirakka 2kpl/170g gluteeniton",
+        "Category": "Valmisruoat ja -keitot",
+        "Vegan": "No",
+        "Gluten Free": "Yes",
+        "Lactose Free": "Yes",
+        "Organic": "No",
+        "Syd\u00e4nmerkki": "No",
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Nutritional Value per": "100 g",
+        "Energia": 280.0,
+        "Rasva": 18.0,
+        "josta tyydyttynytt\u00e4": 9.0,
+        "Hiilihydraatit": 15.0,
+        "josta sokereita": 1.0,
+        "Ravintokuitu": 1.5,
+        "Proteiini": 10.3,
+        "Suola": 1.2
+    },
+    "6410405345509": {
+        "Name": "Pirkka chunky salsa 300g Hot",
+        "Category": "Texmex",
+        "Vegan": "Yes",
+        "Gluten Free": "No",
+        "Lactose Free": "No",
+        "Organic": "No",
+        "Syd\u00e4nmerkki": "No",
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Nutritional Value per": "100 g",
+        "Energia": 0.0,
+        "Rasva": 0.1,
+        "josta tyydyttynytt\u00e4": 7.5,
+        "Hiilihydraatit": 1.5,
+        "Ravintokuitu": 1.5,
+        "Proteiini": 1.2
+    },
+    "8005110003967": {
+        "Name": "Mutti pastakastike Datterini-tomaattilla 400g Ei lis\u00e4tty\u00e4 sokeria",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet",
+        "Vegan": "No",
+        "Gluten Free": "No",
+        "Lactose Free": "No",
+        "Organic": "No",
+        "Syd\u00e4nmerkki": "No",
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Nutritional Value per": "100 g",
+        "Energia": 51.0,
+        "Rasva": 2.3,
+        "josta tyydyttynytt\u00e4": 0.3,
+        "Hiilihydraatit": 5.3,
+        "josta sokereita": 4.9,
+        "Ravintokuitu": 1.6,
+        "Proteiini": 1.4,
+        "Suola": 0.86
+    },
+    "7322550038337": {
+        "Name": "Bl\u00e5 Band Napolitan pata 170g",
+        "Category": "Kuivaruoka-ateriat ja -ainekset",
+        "Vegan": "No",
+        "Gluten Free": "No",
+        "Lactose Free": "Yes",
+        "Organic": "No",
+        "Syd\u00e4nmerkki": "No",
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Nutritional Value per": "100 g",
+        "Energia": 99.0,
+        "Rasva": 3.5,
+        "josta tyydyttynytt\u00e4": 1.4,
+        "Hiilihydraatit": 8.3,
+        "josta sokereita": 2.1,
+        "Ravintokuitu": 1.1,
+        "Proteiini": 8.1,
+        "Suola": 0.49
+    },
+    "8445291657113": {
+        "Name": "Maggi Air Fryer Street Taco ainekset 41g",
+        "Category": "Kuivaruoka-ateriat ja -ainekset",
+        "Vegan": "No",
+        "Gluten Free": "No",
+        "Lactose Free": "No",
+        "Organic": "No",
+        "Syd\u00e4nmerkki": "No",
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Nutritional Value per": "100 g",
+        "Energia": 351.0,
+        "Rasva": 2.0,
+        "josta tyydyttynytt\u00e4": 0.2,
+        "Hiilihydraatit": 78.3,
+        "josta sokereita": 68.2,
+        "Ravintokuitu": 2.2,
+        "Proteiini": 3.9,
+        "Suola": 6.2
+    },
+    "8445291656994": {
+        "Name": "Maggi Air Fryer Shawarma ainekset 25g",
+        "Category": "Kuivaruoka-ateriat ja -ainekset",
+        "Vegan": "No",
+        "Gluten Free": "No",
+        "Lactose Free": "No",
+        "Organic": "No",
+        "Syd\u00e4nmerkki": "No",
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Nutritional Value per": "100 g",
+        "Energia": 309.0,
+        "Rasva": 5.6,
+        "josta tyydyttynytt\u00e4": 0.7,
+        "Hiilihydraatit": 51.6,
+        "josta sokereita": 15.6,
+        "Ravintokuitu": 9.5,
+        "Proteiini": 7.8,
+        "Suola": 15.7
+    },
+    "4002359663291": {
+        "Name": "Dolmio lasagne tomaattikastike 500g",
+        "Category": "Kastikkeet, pestot ja suolaiset levitteet",
+        "Vegan": "No",
+        "Gluten Free": "No",
+        "Lactose Free": "No",
+        "Organic": "No",
+        "Syd\u00e4nmerkki": "No",
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Nutritional Value per": "100 g",
+        "Energia": 46.0,
+        "Rasva": 0.2,
+        "josta tyydyttynytt\u00e4": 0.0,
+        "Hiilihydraatit": 9.1,
+        "josta sokereita": 6.4,
+        "Proteiini": 1.2,
+        "Suola": 0.83
     }
 }

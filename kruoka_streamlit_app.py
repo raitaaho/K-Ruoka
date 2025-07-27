@@ -4,11 +4,11 @@ import glob
 import os
 
 # Find the latest Excel file matching the pattern
-excel_files = glob.glob("product_prices_kruoka_*.xlsx")
+excel_files = glob.glob("discounted_product_prices_kruoka_*.xlsx")
 
 
 if not excel_files:
-    st.error("No Excel files found matching 'product_prices_kruoka_*.xlsx'")
+    st.error("No Excel files found matching 'discounted_strwproduct_prices_kruoka_*.xlsx'")
 else:
     latest_file = max(excel_files, key=os.path.getctime)
 
@@ -20,12 +20,10 @@ else:
 
     # Filters
     if "Category" in df.columns:
-        category = st.selectbox("Select Category", sorted(df["Category"].dropna().unique()))
-        df = df[df["Category"] == category]
-
-    if "Store" in df.columns:
-        store = st.selectbox("Select Store", sorted(df["Store"].dropna().unique()))
-        df = df[df["Store"] == store]
+        categories = st.multiselect("Select Category", sorted(df["Category"].dropna().unique()))
+        
+        if categories:
+            df = df[df["Category"].isin(categories)]
 
     # Display filtered data
     st.subheader("Filtered Products")
