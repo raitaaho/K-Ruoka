@@ -350,7 +350,7 @@ def run_scraper(selected_categories, store_locations, nutritional_content_dict, 
     options.add_argument(f'--user-agent={user_agent}')
 
     driver = uc.Chrome(options=options)
-    driver.get("https://www.k-ruoka.fi/?kaupat&kauppahaku=Tampere")
+    driver.get("https://www.k-ruoka.fi/?kaupat&kauppahaku=Tampere&ketju=kcitymarket&ketju=ksupermarket")
 
     wait = WebDriverWait(driver, 10)
     try:
@@ -450,7 +450,7 @@ def run_scraper(selected_categories, store_locations, nutritional_content_dict, 
 
             time.sleep(random.uniform(1, 2))
             store.click()
-            time.sleep(random.uniform(2, 3))
+            time.sleep(random.uniform(4, 6))
 
             counter += 1
 
@@ -490,7 +490,7 @@ def run_scraper(selected_categories, store_locations, nutritional_content_dict, 
                         break
                     last_list_len = new_list_len
             except TimeoutException:
-                print("No products found in", store_name, "for category", product_category)
+                print("No products found in", store_title, "for category", product_category)
                 category_counter += 1
                 category_progress_bar.progress(int((category_counter / total_categories) * 100))
                 continue
@@ -500,7 +500,7 @@ def run_scraper(selected_categories, store_locations, nutritional_content_dict, 
                 products_element = wait.until(EC.visibility_of_element_located((By.XPATH, "//ul[@data-testid='product-search-results']")))
                 product_cards = products_element.find_elements(By.XPATH, ".//div[starts-with(@class, 'ProductCardDiscount__Badge') or @data-testid='product-normal-price']//ancestor::li")
             except TimeoutException:
-                print("No products found in", store_name, "for category", product_category, "after scrolling")
+                print("No products found in", store_title, "for category", product_category, "after scrolling")
                 category_counter += 1
                 category_progress_bar.progress(int((category_counter / total_categories) * 100))
                 continue
@@ -625,7 +625,6 @@ def run_scraper(selected_categories, store_locations, nutritional_content_dict, 
 
                     discounted_product_price_dict[ean_code] = product_price_dict[ean_code]
                     
-
                 else:
                     try:
                         driver.execute_script("arguments[0].scrollIntoView()", card)
@@ -949,6 +948,7 @@ def run_scraper(selected_categories, store_locations, nutritional_content_dict, 
             if product_price_dict.get(ean_code, 'Unknown') != 'Unknown':
                 if product_price_dict[ean_code].get('Store', 'Unknown') == store_name:
                     product_price_dict[ean_code]['Price per Unit'] = unit_price
+                    product_price_dict[ean_code]['Unit'] = unit_type
                 
                 else:
                     if product_price_dict[ean_code].get('Price per Unit', 'Unknown') != 'Unknown':
@@ -1033,42 +1033,42 @@ def run_scraper(selected_categories, store_locations, nutritional_content_dict, 
                     table = wait.until(EC.visibility_of_element_located((By.XPATH, "//h2[(text()='Ravintosisältö')]//parent::button//following::table[starts-with(@class, 'NewNutritionalDetails__Table')]")))
                     unit_size = table.find_element(By.XPATH, ".//th[starts-with(@class, 'NewNutritionalDetails__NutritionContentTableColumnHeading')]//div").text
                     product_price_dict[ean_code]['Nutritional Value per'] = unit_size
-                    keys = table.find_elements(By.XPATH, "//th[starts-with(@class, 'NewNutritionalDetails__NutritionContentTableRowHeading')]")
-                    values = table.find_elements(By.XPATH, "//td[starts-with(@class, 'NewNutritionalDetails__NutritionContentTableCell')][1]")
+                    keys = table.find_elements(By.XPATH, ".//tbody//th[starts-with(@class, 'NewNutritionalDetails')]")
+                    values = table.find_elements(By.XPATH, ".//tbody//td[starts-with(@class, 'NewNutritionalDetails')]")
 
                     for key in keys:
-                        tokens = key.text.split('\n')
-                        for token in tokens:
-                            keys_list.append(token)
+                        keys_list.append(key.text.strip())
 
                     for value in values:
-                        tokens = value.text.split('\n')
-                        for token in tokens:
-                            kcal_index = token.find("kcal")
-                            kj_index = token.find("kJ")
-                            backslash_index = token.find("/")
+                        token = value.text.strip()
+                        kcal_index = token.find("kcal")
+                        kj_index = token.find("kJ")
+                        backslash_index = token.find("/")
 
-                            if kcal_index != -1:
-                                if backslash_index != -1:
-                                    value_string = token[backslash_index+1:kcal_index].replace(',', '.').strip()
-                                    values_list.append(float(value_string) if len(value_string) != 0 else 0.0)
-                                else:
-                                    if kj_index != -1:
-                                        value_string = token[:kj_index].replace(',', '.').strip()
-                                        values_list.append(float(value_string) * 0.2390057 if len(value_string) != 0 else 0.0)
-                                    else:
-                                        value_string = token[:kcal_index].replace(',', '.').strip()
-                                        values_list.append(float(value_string) if len(value_string) != 0 else 0.0)
-
+                        if kcal_index != -1:
+                            if backslash_index != -1:
+                                value_string = token[backslash_index+1:kcal_index].replace(',', '.').strip()
+                                values_list.append(float(value_string) if len(value_string) != 0 else 0.0)
                             else:
                                 if kj_index != -1:
-                                    value_string = token[:kj_index].replace(',', '.').replace(' ', '').strip()
+                                    value_string = token[:kj_index].replace(',', '.').strip()
                                     values_list.append(float(value_string) * 0.2390057 if len(value_string) != 0 else 0.0)
                                 else:
-                                    value = extract_size_in_g(token.strip())
-                                    values_list.append(value if value else 0.0)
+                                    value_string = token[:kcal_index].replace(',', '.').strip()
+                                    values_list.append(float(value_string) if len(value_string) != 0 else 0.0)
 
-                    kv_pairs = dict(zip(keys_list, values_list))
+                        else:
+                            if kj_index != -1:
+                                value_string = token[:kj_index].replace(',', '.').replace(' ', '').strip()
+                                values_list.append(float(value_string) * 0.2390057 if len(value_string) != 0 else 0.0)
+                            else:
+                                value = extract_size_in_g(token.strip())
+                                values_list.append(value if value else 0.0)
+                    if len(keys_list) != len(values_list):
+                        print("Keys and values lists do not match for", product_name, "keys:", keys_list, "values:", values_list)
+                        continue
+                    else:
+                        kv_pairs = dict(zip(keys_list, values_list))
                     
                 except TimeoutException:
                     try:
@@ -1083,8 +1083,13 @@ def run_scraper(selected_categories, store_locations, nutritional_content_dict, 
                         for value in values:
                             value_string = value.text.strip()
                             value_in_grams = extract_size_in_g(value_string)
-                            values_list.append(value_in_grams) if value_in_grams else 0.0
-                        kv_pairs = dict(zip(keys_list, values_list))
+                            values_list.append(value_in_grams if value_in_grams else 0.0)
+
+                        if len(keys_list) != len(values_list):
+                            print("Keys and values lists do not match for", product_name, "keys:", keys_list, "values:", values_list)
+                            continue
+                        else:
+                            kv_pairs = dict(zip(keys_list, values_list))
 
                     except Exception as e:
                         print("Could not get nutritional content for", product_name, e)
@@ -1134,7 +1139,7 @@ def run_scraper(selected_categories, store_locations, nutritional_content_dict, 
             print("Could not write product price data to JSON file", e)
         
 
-        driver.get("https://www.k-ruoka.fi/?kaupat&kauppahaku=Tampere")
+        driver.get("https://www.k-ruoka.fi/?kaupat&kauppahaku=Tampere&ketju=kcitymarket&ketju=ksupermarket")
 
     elapsed = time.perf_counter() - start0
     elapsed_time_text.text(f"Total time elapsed: {round(elapsed/60, 2)} minutes")
