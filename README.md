@@ -23,12 +23,6 @@ This Python script is a web scraper designed to collect product information, nut
     cd K-ruoka
     ```
 
-2. Set Up a Python Environment
-    ```
-    python -m venv venv
-    source venv/bin/activate  # On Windows use: venv\\Scripts\\activate
-    ```
-
 3. Install Dependencies
     ```
     pip install -r requirements.txt
