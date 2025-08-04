@@ -329,11 +329,7 @@ def preprocess_and_save():
 
     return nutritional_content_dict, product_price_dict, discounted_product_price_dict
 
-def run_scraper(selected_categories, store_locations, nutritional_content_dict, product_price_dict, discounted_product_price_dict):
-
-    start0 = time.perf_counter()
-    elapsed_time_text = st.empty()
-
+def get_stores_list(search_string):
     user_agents = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15",
@@ -350,7 +346,7 @@ def run_scraper(selected_categories, store_locations, nutritional_content_dict, 
     options.add_argument(f'--user-agent={user_agent}')
 
     driver = uc.Chrome(options=options)
-    driver.get("https://www.k-ruoka.fi/?kaupat&kauppahaku=Tampere&ketju=kcitymarket&ketju=ksupermarket")
+    driver.get(f"https://www.k-ruoka.fi/?kaupat&kauppahaku={search_string}")
 
     wait = WebDriverWait(driver, 10)
     try:
@@ -368,13 +364,11 @@ def run_scraper(selected_categories, store_locations, nutritional_content_dict, 
         search_summary_string = search_summary_element.text if search_summary_element.text else "0"
         if search_summary_string == "0":
             print("No stores found in the specified locations")
-            driver.quit()
-            exit()
+            return[]
         number_of_stores = int(''.join(filter(str.isdigit, search_summary_string)))
     except TimeoutException:
         print("Store search summary element not found or not visible")
-        driver.quit()
-        exit()
+        return []
 
     store_list_element = wait.until(EC.visibility_of_element_located((By.XPATH, "//ul[@data-component='store-list']")))
     stores = store_list_element.find_elements(By.XPATH, ".//li[@data-component='store-list-item']")
@@ -393,12 +387,22 @@ def run_scraper(selected_categories, store_locations, nutritional_content_dict, 
         stores = driver.find_elements(By.XPATH, "//ul[@data-component='store-list']//li[@data-component='store-list-item']")
         new_number_of_stores = len(stores)
 
-    total_stores = 0
+    store_options = []
     for store in stores:
-        store_location = store.find_element(By.XPATH, ".//div[@data-testid='store-location']").text
-        if store_location in store_locations:
-            total_stores += 1
+        try:
+            store_title = store.find_element(By.XPATH, ".//h3[@data-testid='store-title']").text
+            store_options.append(store_title)
+        except NoSuchElementException:
+            print("Store title element not found for one of the stores, skipping this store")
+            continue
 
+    return store_options, driver
+
+def run_scraper(selected_categories, selected_stores, nutritional_content_dict, product_price_dict, discounted_product_price_dict, driver):
+
+    start0 = time.perf_counter()
+    elapsed_time_text = st.empty()
+    
     store_progress_text = st.empty()
     store_progress_bar = st.progress(0)
     category_progress_text = st.empty()
@@ -410,6 +414,21 @@ def run_scraper(selected_categories, store_locations, nutritional_content_dict, 
 
     counter = 0
     store_counter = 0
+    total_stores = len(selected_stores)
+
+    wait = WebDriverWait(driver, 10)
+    try:
+        search_summary_element = wait.until(EC.visibility_of_element_located((By.XPATH, "//div[@data-component='search-summary']")))
+        search_summary_string = search_summary_element.text if search_summary_element.text else "0"
+        if search_summary_string == "0":
+            print("No stores found in the specified locations")
+            driver.quit()
+            exit()
+        number_of_stores = int(''.join(filter(str.isdigit, search_summary_string)))
+    except TimeoutException:
+        print("Store search summary element not found or not visible")
+        driver.quit()
+        exit()
 
     while counter < number_of_stores:
         if store_counter >= total_stores:
@@ -440,8 +459,8 @@ def run_scraper(selected_categories, store_locations, nutritional_content_dict, 
             store_name = stores[counter].get_attribute("data-store")
             store_title = stores[counter].find_element(By.XPATH, ".//h3[@data-testid='store-title']").text
 
-            if store_location not in store_locations: 
-                print(f"Skipping store {counter + 1} - {store_title} as {store_location} is not in the specified locations")
+            if store_title not in selected_stores: 
+                print(f"Skipping store {counter + 1} - {store_title} - {store_location} as it is not in the selected stores list")
                 counter += 1
                 continue
 
@@ -1034,7 +1053,7 @@ def run_scraper(selected_categories, store_locations, nutritional_content_dict, 
                     unit_size = table.find_element(By.XPATH, ".//th[starts-with(@class, 'NewNutritionalDetails__NutritionContentTableColumnHeading')]//div").text
                     product_price_dict[ean_code]['Nutritional Value per'] = unit_size
                     keys = table.find_elements(By.XPATH, ".//tbody//th[starts-with(@class, 'NewNutritionalDetails')]")
-                    values = table.find_elements(By.XPATH, ".//tbody//td[starts-with(@class, 'NewNutritionalDetails')]")
+                    values = table.find_elements(By.XPATH, ".//tbody//td[starts-with(@class, 'NewNutritionalDetails')][1]")
 
                     for key in keys:
                         keys_list.append(key.text.strip())
@@ -1075,7 +1094,7 @@ def run_scraper(selected_categories, store_locations, nutritional_content_dict, 
                         unit_size_element = driver.find_element(By.XPATH, "//h2[text()='Ravintosisältö']//parent::button//following::h3").text
                         unit_size = extract_portion_size(unit_size_element)
                         keys = driver.find_elements(By.XPATH, "//h2[text()='Ravintosisältö']//parent::button//following::dt[starts-with(@id, 'product-nutritional-detail')]")
-                        values = driver.find_elements(By.XPATH, "//h2[text()='Ravintosisältö']//parent::button//following::dd[starts-with(@class, 'NewNutritionalDetails')]")
+                        values = driver.find_elements(By.XPATH, "//h2[text()='Ravintosisältö']//parent::button//following::dd[starts-with(@class, 'NewNutritionalDetails')][1]")
 
                         for key in keys:
                             keys_list.append(key.text.strip())
@@ -1139,7 +1158,7 @@ def run_scraper(selected_categories, store_locations, nutritional_content_dict, 
             print("Could not write product price data to JSON file", e)
         
 
-        driver.get("https://www.k-ruoka.fi/?kaupat&kauppahaku=Tampere&ketju=kcitymarket&ketju=ksupermarket")
+        driver.get("https://www.k-ruoka.fi/?kaupat&kauppahaku=Tampere")
 
     elapsed = time.perf_counter() - start0
     elapsed_time_text.text(f"Total time elapsed: {round(elapsed/60, 2)} minutes")
@@ -1206,37 +1225,57 @@ st.write(
     """This is a web scraper for K-Ruoka that collects product information, nutritional content, and prices from K-Ruoka's website. The scraped data is merged into existing data and can be processed further."""
 )
 
-st.header("1. Choose the product categories to scrape")
-selected_categories = st.multiselect(
-    "Choose product categories",
-    options=category_options.keys(),
-    default=[]
-)
-
-st.header("2. Enter store locations (separated by commas)")
+st.header("1. Enter search phrase for store locations")
 store_locations_input = st.text_input(
-    "Write the locations separated by commas (e.g. Tampere, Pirkkala, Lempäälä)",
+    "Write the search phrase for locations (e.g. Tampere)",
     value=""
 )
 
-if st.button("Start scraping"):
-    nutritional_content_dict, product_price_dict, discounted_product_price_dict = preprocess_and_save()
-    if not selected_categories:
-        st.warning("Choose at least one product category.")
-    elif not store_locations_input.strip():
-        st.warning("Enter at leat one store location.")
-    else:
-        store_locations = [loc.strip() for loc in store_locations_input.split(",") if loc.strip()]
-        selected_categories = [category_options[cat] for cat in selected_categories]
-        st.success("Chosen product categories:")
-        for cat in selected_categories:
-            st.write(f"- {inverted_category_options[cat]}")
+if "store_options" not in st.session_state:
+    st.session_state.store_options = []
+if "driver" not in st.session_state:
+    st.session_state.driver = None
+if "send_clicked" not in st.session_state:
+    st.session_state.send_clicked = False
 
-        st.success(f"Entered store locations:")
-        for location in store_locations:
-            st.write(f"- {location}")
-        updated_discounted_product_price_dict = run_scraper(selected_categories, store_locations, nutritional_content_dict, product_price_dict, discounted_product_price_dict)
-        _ = postprocess_and_save(updated_discounted_product_price_dict)
+if st.button("Confirm"):
+    st.session_state.store_options, st.session_state.driver = get_stores_list(store_locations_input)
+    st.session_state.send_clicked = True
+
+if st.session_state.send_clicked:
+    st.header("2. Select stores to be scraped")
+    selected_stores = st.multiselect(
+        "Select stores ",
+        options=st.session_state.store_options,
+        default=[]
+    )
+
+    st.header("3. Choose the product categories to scrape")
+    selected_categories = st.multiselect(
+        "Choose product categories",
+        options=category_options.keys(),
+        default=[]
+    )
+
+    if st.button("Start scraping"):
+        if not selected_categories:
+            st.warning("Choose at least one product category.")
+        elif not selected_stores:
+            st.warning("Select at least one store.")
+        elif not store_locations_input:
+            st.warning("Enter a search phrase for store locations.")
+        else:
+            nutritional_content_dict, product_price_dict, discounted_product_price_dict = preprocess_and_save()
+            selected_categories = [category_options[cat] for cat in selected_categories]
+            st.success("Chosen product categories:")
+            for cat in selected_categories:
+                st.write(f"- {inverted_category_options[cat]}")
+
+            st.success(f"Selected stores:")
+            for store in selected_stores:
+                st.write(f"- {store}")
+            updated_discounted_product_price_dict = run_scraper(selected_categories, selected_stores, nutritional_content_dict, product_price_dict, discounted_product_price_dict, st.session_state.driver)
+            _ = postprocess_and_save(updated_discounted_product_price_dict)
 
 
 
