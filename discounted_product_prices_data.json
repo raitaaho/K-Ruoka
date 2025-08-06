@@ -9691,10 +9691,10 @@
         "Price per kg": 12.26
     },
     "6409100076115": {
-        "Price per Unit": 18.15,
+        "Price per Unit": 16.36,
         "Unit": "kg",
         "Size (kg)": 0.28,
-        "Store": "k-supermarket-kaleva",
+        "Store": "k-citymarket-tampere-turtola",
         "Name": "M\u00e4kitalon Farmi Tupla kana-mozzarella-pastasalaatti 275g",
         "Nutritional Value per": "100 g",
         "Energia": 173.0,
@@ -9714,7 +9714,7 @@
         "Category": "Valmisruoat ja -keitot",
         "Discount valid starting": "26.4.2025",
         "Discount valid until": "31.8.2025",
-        "Price per kg": 18.15
+        "Price per kg": 16.36
     },
     "6409400003682": {
         "Price per Unit": 13.3,
@@ -9768,10 +9768,10 @@
         "Price per kg": 15.12
     },
     "6409100070663": {
-        "Price per Unit": 18.15,
+        "Price per Unit": 16.36,
         "Unit": "kg",
         "Size (kg)": 0.28,
-        "Store": "k-supermarket-kaleva",
+        "Store": "k-citymarket-tampere-turtola",
         "Name": "M\u00e4kitalon Farmi Tupla tonnikalasalaatti 275g",
         "Nutritional Value per": "100 g",
         "Energia": 127.0,
@@ -9791,7 +9791,7 @@
         "Category": "Valmisruoat ja -keitot",
         "Discount valid starting": "26.4.2025",
         "Discount valid until": "31.8.2025",
-        "Price per kg": 18.15
+        "Price per kg": 16.36
     },
     "6409100077525": {
         "Price per Unit": 6.48,
@@ -62849,8 +62849,8 @@
     "7313619002529": {
         "Name": "Br\u00e4mhults Vitamin Water Mansikka-Vadelma mehujuoma 0,5l",
         "Size (kg)": 0.5,
-        "Store": "k-market-peltolammi",
-        "Price per Unit": 2.6,
+        "Store": "k-supermarket-tammelan-stadion",
+        "Price per Unit": 2.58,
         "Discount valid starting": "24.7.2025",
         "Discount valid until": "31.8.2025",
         "Nutritional Value per": "100 ml",
@@ -62871,7 +62871,7 @@
         "Proteiini": 0.0,
         "Suola": 0.0,
         "Unit": "l",
-        "Price per kg": 2.6
+        "Price per kg": 2.58
     },
     "8936020052564": {
         "Name": "Coconaut Sparkling kookosvesi 0,32l",
@@ -78357,10 +78357,10 @@
         "Price per kg": 2.68
     },
     "7313619002536": {
-        "Price per Unit": 3.58,
+        "Price per Unit": 2.58,
         "Unit": "l",
         "Size (kg)": 0.5,
-        "Store": "k-citymarket-tampere-turtola",
+        "Store": "k-supermarket-tammelan-stadion",
         "Name": "Br\u00e4mhults Vitamin Water Persikka-Passionhedelm\u00e4 mehujuoma 0,5l",
         "Category": "Energia- ja urheilujuomat",
         "Vegan": "Yes",
@@ -78381,13 +78381,13 @@
         "Suola": 0.0,
         "Discount valid starting": "14.7.2025",
         "Discount valid until": "17.8.2025",
-        "Price per kg": 3.58
+        "Price per kg": 2.58
     },
     "7313619002543": {
-        "Price per Unit": 3.58,
+        "Price per Unit": 2.58,
         "Unit": "l",
         "Size (kg)": 0.5,
-        "Store": "k-citymarket-tampere-turtola",
+        "Store": "k-supermarket-tammelan-stadion",
         "Name": "Br\u00e4mhults Vitamin Water Sitruuna-Lime mehujuoma 0,5l",
         "Category": "Energia- ja urheilujuomat",
         "Vegan": "Yes",
@@ -78408,7 +78408,7 @@
         "Suola": 0.0,
         "Discount valid starting": "14.7.2025",
         "Discount valid until": "17.8.2025",
-        "Price per kg": 3.58
+        "Price per kg": 2.58
     },
     "6430057697634": {
         "Price per Unit": 3.68,
@@ -79061,10 +79061,10 @@
         "Price per kg": 5.68
     },
     "7350155310343": {
-        "Price per Unit": 7.7,
+        "Price per Unit": 5.58,
         "Unit": "l",
         "Size (kg)": 0.33,
-        "Store": "k-supermarket-kuninkaankulma",
+        "Store": "k-supermarket-ratina",
         "Name": "Zen Natural Energy Peach-Apricot energiajuoma 0,33l",
         "Vegan": "No",
         "Gluten Free": "No",
@@ -79085,13 +79085,13 @@
         "Category": "Energia- ja urheilujuomat",
         "Discount valid starting": "3.8.2025",
         "Discount valid until": "31.8.2025",
-        "Price per kg": 7.7
+        "Price per kg": 5.58
     },
     "7350155310398": {
-        "Price per Unit": 7.09,
+        "Price per Unit": 5.58,
         "Unit": "l",
         "Size (kg)": 0.33,
-        "Store": "k-supermarket-herkkuduo",
+        "Store": "k-supermarket-ratina",
         "Name": "Zen Natural Energy Mango energiajuoma 0,33l",
         "Vegan": "No",
         "Gluten Free": "No",
@@ -79112,13 +79112,13 @@
         "Category": "Energia- ja urheilujuomat",
         "Discount valid starting": "10.6.2025",
         "Discount valid until": "31.8.2025",
-        "Price per kg": 7.09
+        "Price per kg": 5.58
     },
     "7350155310381": {
-        "Price per Unit": 7.7,
+        "Price per Unit": 5.58,
         "Unit": "l",
         "Size (kg)": 0.33,
-        "Store": "k-supermarket-kuninkaankulma",
+        "Store": "k-supermarket-ratina",
         "Name": "Zen Natural Energy Sitruuna-Lime energiajuoma 0,33l",
         "Vegan": "No",
         "Gluten Free": "No",
@@ -79139,7 +79139,7 @@
         "Category": "Energia- ja urheilujuomat",
         "Discount valid starting": "3.8.2025",
         "Discount valid until": "31.8.2025",
-        "Price per kg": 7.7
+        "Price per kg": 5.58
     },
     "6430057698204": {
         "Price per Unit": 5.68,
@@ -79284,10 +79284,10 @@
         "Price per kg": 5.68
     },
     "7350155310404": {
-        "Price per Unit": 7.09,
+        "Price per Unit": 5.58,
         "Unit": "l",
         "Size (kg)": 0.33,
-        "Store": "k-supermarket-herkkuduo",
+        "Store": "k-supermarket-ratina",
         "Name": "Zen Natural Energy Mustikka-Vadelma energiajuoma 0,33l",
         "Vegan": "No",
         "Gluten Free": "No",
@@ -79308,7 +79308,7 @@
         "Category": "Energia- ja urheilujuomat",
         "Discount valid starting": "10.6.2025",
         "Discount valid until": "31.8.2025",
-        "Price per kg": 7.09
+        "Price per kg": 5.58
     },
     "6410405067418": {
         "Price per Unit": 0.98,
@@ -91998,5 +91998,167 @@
         "Discount valid starting": "5.6.2025",
         "Discount valid until": "31.8.2025",
         "Price per kg": 3.45
+    },
+    "4779040223910": {
+        "Price per Unit": 3.6,
+        "Unit": "l",
+        "Size (kg)": 0.5,
+        "Store": "k-citymarket-tampere-lielahti",
+        "Name": "ALOE Aloe Vera juoma Premium 0,5l",
+        "Category": "Energia- ja urheilujuomat",
+        "Vegan": "No",
+        "Gluten Free": "No",
+        "Lactose Free": "No",
+        "Organic": "No",
+        "Syd\u00e4nmerkki": "No",
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Kofeiini (per 100ml)": 0.0,
+        "Kofeiini (per tuote)": 0.0,
+        "Nutritional Value per": "100 ml",
+        "Energia": 36.0,
+        "Rasva": 0.0,
+        "josta tyydyttynytt\u00e4": 0.0,
+        "Hiilihydraatit": 8.9,
+        "josta sokereita": 8.9,
+        "Proteiini": 0.0,
+        "Suola": 0.05,
+        "Discount valid starting": "5.5.2025",
+        "Discount valid until": "27.8.2025",
+        "Price per kg": 3.6
+    },
+    "4779040223934": {
+        "Price per Unit": 3.6,
+        "Unit": "l",
+        "Size (kg)": 0.5,
+        "Store": "k-citymarket-tampere-lielahti",
+        "Name": "ALEO Aloe Vera juoma Mango 0,5l",
+        "Category": "Energia- ja urheilujuomat",
+        "Vegan": "No",
+        "Gluten Free": "No",
+        "Lactose Free": "No",
+        "Organic": "No",
+        "Syd\u00e4nmerkki": "No",
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Kofeiini (per 100ml)": 0.0,
+        "Kofeiini (per tuote)": 0.0,
+        "Nutritional Value per": "100 ml",
+        "Energia": 32.0,
+        "Rasva": 0.0,
+        "josta tyydyttynytt\u00e4": 0.0,
+        "Hiilihydraatit": 7.9,
+        "josta sokereita": 7.9,
+        "Proteiini": 0.0,
+        "Suola": 0.04,
+        "Discount valid starting": "5.5.2025",
+        "Discount valid until": "27.8.2025",
+        "Price per kg": 3.6
+    },
+    "7340222801065": {
+        "Price per Unit": 4.6,
+        "Unit": "l",
+        "Size (kg)": 0.5,
+        "Store": "k-citymarket-tampere-lielahti",
+        "Name": "Vitamin Well Refresh Kiivi ja lemonade hyvinvointijuoma 0,5l",
+        "Category": "Energia- ja urheilujuomat",
+        "Vegan": "Yes",
+        "Gluten Free": "No",
+        "Lactose Free": "No",
+        "Organic": "No",
+        "Syd\u00e4nmerkki": "No",
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Kofeiini (per 100ml)": 0.0,
+        "Kofeiini (per tuote)": 0.0,
+        "Nutritional Value per": "100 ml",
+        "Energia": 17.0,
+        "Rasva": 0.0,
+        "josta tyydyttynytt\u00e4": 0.0,
+        "Hiilihydraatit": 4.2,
+        "josta sokereita": 4.2,
+        "Proteiini": 0.0,
+        "Suola": 0.03,
+        "Discount valid starting": "2.6.2025",
+        "Discount valid until": "31.8.2025",
+        "Price per kg": 4.6
+    },
+    "6430055218596": {
+        "Price per Unit": 4.69,
+        "Unit": "l",
+        "Size (kg)": 1.0,
+        "Store": "k-supermarket-kuninkaankulma",
+        "Name": "Foodin kookosvesi 1l luomu",
+        "Category": "Energia- ja urheilujuomat",
+        "Vegan": "No",
+        "Gluten Free": "No",
+        "Lactose Free": "No",
+        "Organic": "Yes",
+        "Syd\u00e4nmerkki": "No",
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Kofeiini (per 100ml)": 0.0,
+        "Kofeiini (per tuote)": 0.0,
+        "Nutritional Value per": "100 ml",
+        "Energia": 16.0,
+        "Rasva": 0.0,
+        "josta tyydyttynytt\u00e4": 0.0,
+        "Hiilihydraatit": 4.0,
+        "josta sokereita": 3.1,
+        "Proteiini": 0.0,
+        "Suola": 0.1,
+        "Discount valid starting": "18.6.2025",
+        "Discount valid until": "31.8.2025",
+        "Price per kg": 4.69
+    },
+    "6430070650760": {
+        "Price per Unit": 7.12,
+        "Unit": "l",
+        "Size (kg)": 0.33,
+        "Store": "k-supermarket-kuninkaankulma",
+        "Name": "The Good Guys Kombucha Lime sokton 0,33l",
+        "Category": "Energia- ja urheilujuomat",
+        "Vegan": "Yes",
+        "Gluten Free": "Yes",
+        "Lactose Free": "No",
+        "Organic": "No",
+        "Syd\u00e4nmerkki": "No",
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Kofeiini (per 100ml)": 0.0,
+        "Kofeiini (per tuote)": 0.0,
+        "Nutritional Value per": "100 ml",
+        "Energia": 3.0,
+        "Rasva": 0.0,
+        "josta tyydyttynytt\u00e4": 0.0,
+        "Hiilihydraatit": 1.5,
+        "josta sokereita": 0.4,
+        "Proteiini": 0.0,
+        "Suola": 0.0,
+        "Discount valid starting": "5.5.2025",
+        "Discount valid until": "27.8.2025",
+        "Price per kg": 7.12
+    },
+    "6430070650708": {
+        "Price per Unit": 7.12,
+        "Unit": "l",
+        "Size (kg)": 0.33,
+        "Store": "k-supermarket-ratina",
+        "Name": "The Good Guys Kombucha Lime Time 0,33l",
+        "Category": "Energia- ja urheilujuomat",
+        "Vegan": "Yes",
+        "Gluten Free": "Yes",
+        "Lactose Free": "No",
+        "Organic": "Yes",
+        "Syd\u00e4nmerkki": "No",
+        "Hyv\u00e4\u00e4 Suomesta": "No",
+        "Kofeiini (per 100ml)": 0.0,
+        "Kofeiini (per tuote)": 0.0,
+        "Nutritional Value per": "100 ml",
+        "Energia": 18.0,
+        "Rasva": 0.1,
+        "josta tyydyttynytt\u00e4": 0.1,
+        "Hiilihydraatit": 4.5,
+        "josta sokereita": 4.5,
+        "Proteiini": 0.0,
+        "Suola": 0.0,
+        "Discount valid starting": "5.5.2025",
+        "Discount valid until": "27.8.2025",
+        "Price per kg": 7.12
     }
 }
