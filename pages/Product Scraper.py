@@ -300,6 +300,9 @@ def preprocess_and_save():
         details = product_price_dict[ean]
         discount_until = details.get('Discount valid until', 'Unknown')
         if discount_until != "Unknown":
+            #if product_price_dict[ean]['Discount valid until'].split('.')[2] == '':
+                #product_price_dict.pop(ean)
+                #continue
             if date(today.year, today.month, today.day) <= date(int(product_price_dict[ean]['Discount valid until'].split('.')[2]), int(product_price_dict[ean]['Discount valid until'].split('.')[1]), int(product_price_dict[ean]['Discount valid until'].split('.')[0])):   
                 continue
             else:
@@ -314,6 +317,9 @@ def preprocess_and_save():
         details = discounted_product_price_dict[ean]
         discount_until = details.get('Discount valid until', "Unknown")
         if discount_until != "Unknown":
+            #if discounted_product_price_dict[ean]['Discount valid until'].split('.')[2] == '':
+                #discounted_product_price_dict.pop(ean)
+                #continue
             if date(today.year, today.month, today.day) <= date(int(discounted_product_price_dict[ean]['Discount valid until'].split('.')[2]), int(discounted_product_price_dict[ean]['Discount valid until'].split('.')[1]), int(discounted_product_price_dict[ean]['Discount valid until'].split('.')[0])):   
                 continue
             else:
@@ -339,14 +345,28 @@ def get_stores_list(search_string):
     "Mozilla/5.0 (Linux; Android 14; SM-G991B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36",
     "Mozilla/5.0 (iPad; CPU OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/124.0.2478.80",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Linux; Android 13; Pixel 6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36",
+    "Mozilla/5.0 (Linux; Android 14; Samsung Galaxy S22) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36",
+    "Mozilla/5.0 (Windows NT 11.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Linux; Android 13; Xiaomi Mi 11) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36"
     ]
+
     user_agent = random.choice(user_agents)
 
     options = uc.ChromeOptions()
     options.add_argument(f'--user-agent={user_agent}')
+    options.add_argument("--headless")
+    options.add_argument("--start-maximized")
 
     driver = uc.Chrome(options=options)
     driver.get(f"https://www.k-ruoka.fi/?kaupat&kauppahaku={search_string}")
+    time.sleep(random.uniform(1, 2))
 
     wait = WebDriverWait(driver, 10)
     try:
@@ -358,7 +378,7 @@ def get_stores_list(search_string):
         print('Prompt to accept cookies did not pop up')
     
 
-    wait = WebDriverWait(driver, 10)
+    wait = WebDriverWait(driver, 20)
     try:
         search_summary_element = wait.until(EC.visibility_of_element_located((By.XPATH, "//div[@data-component='search-summary']")))
         search_summary_string = search_summary_element.text if search_summary_element.text else "0"
@@ -436,7 +456,7 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
         elapsed = time.perf_counter() - start0
         elapsed_time_text.text(f"Total time elapsed: {round(elapsed/60, 2)} minutes")
         start = time.perf_counter()
-        wait = WebDriverWait(driver, 10)
+        wait = WebDriverWait(driver, 30)
         try:
             store_list_element = wait.until(EC.visibility_of_element_located((By.XPATH, "//ul[@data-component='store-list']")))
             stores = store_list_element.find_elements(By.XPATH, ".//li[@data-component='store-list-item']")
@@ -491,9 +511,9 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
 
             category_progress_text.text(f"Scraping category {category_counter+1} of {total_categories} - {inverted_category_options[product_category]}")
             driver.get(f"https://www.k-ruoka.fi/kauppa/tuotehaku/{product_category}")
-            time.sleep(random.uniform(2, 3))
+            time.sleep(random.uniform(1, 2))
             
-            wait = WebDriverWait(driver, 10)
+            wait = WebDriverWait(driver, 20)
             try:
                 products_list = wait.until(EC.visibility_of_element_located((By.XPATH, "//ul[@data-testid='product-search-results']")))
                 product_cards = products_list.find_elements(By.XPATH, ".//li[@data-testid='product-card']")
@@ -505,9 +525,15 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
                     time.sleep(random.uniform(2, 3))
                     product_cards = driver.find_elements(By.XPATH, "//ul[@data-testid='product-search-results']//li[@data-testid='product-card']")
                     new_list_len = len(product_cards)
-                    if new_list_len == last_list_len:
-                        break
-                    last_list_len = new_list_len
+                    if new_list_len != last_list_len:
+                        last_list_len = new_list_len
+                    else:
+                        time.sleep(random.uniform(1, 2))
+                        product_cards = driver.find_elements(By.XPATH, "//ul[@data-testid='product-search-results']//li[@data-testid='product-card']")
+                        new_list_len = len(product_cards)
+                        if new_list_len == last_list_len:
+                            break
+                        last_list_len = new_list_len
             except TimeoutException:
                 print("No products found in", store_title, "for category", product_category)
                 category_counter += 1
@@ -612,11 +638,13 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
                             kg_price = 999.999
 
                         if product_price_dict.get(ean_code, "Unknown") != "Unknown":
-                            if product_price_dict[ean_code].get('Store') == store_name:
-                                product_price_dict[ean_code]['Price per Unit'] = unit_price
-                                product_price_dict[ean_code]['Price per kg'] = kg_price
                             if discount == 'Yes':
                                 if product_price_dict[ean_code].get('Discount valid until', 'Unknown') == 'Unknown':
+                                    product_price_dict[ean_code]['Price per Unit'] = unit_price
+                                    product_price_dict[ean_code]['Price per kg'] = kg_price
+                                    product_price_dict[ean_code]['Unit'] = unit_type
+                                    product_price_dict[ean_code]['Size (kg)'] = size
+                                    product_price_dict[ean_code]['Store'] = store_name
                                     product_urls.update({url: ean_code})
                                 else:
                                     if product_price_dict[ean_code].get('Price per Unit', 'Unknown') != 'Unknown':
@@ -626,7 +654,12 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
                                             product_price_dict[ean_code]['Unit'] = unit_type
                                             product_price_dict[ean_code]['Size (kg)'] = size
                                             product_price_dict[ean_code]['Store'] = store_name
-
+                                            product_urls.update({url: ean_code})
+                                        elif product_price_dict[ean_code]['Price per Unit'] < unit_price:
+                                            if product_price_dict[ean_code].get('Store') == store_name:
+                                                product_price_dict[ean_code]['Price per Unit'] = unit_price
+                                                product_price_dict[ean_code]['Price per kg'] = kg_price
+                                                product_urls.update({url: ean_code})
                                     else:
                                         product_price_dict[ean_code]['Price per Unit'] = unit_price
                                         product_price_dict[ean_code]['Price per kg'] = kg_price
@@ -642,6 +675,10 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
                                         product_price_dict[ean_code]['Unit'] = unit_type
                                         product_price_dict[ean_code]['Size (kg)'] = size
                                         product_price_dict[ean_code]['Store'] = store_name
+                                    else:
+                                        if product_price_dict[ean_code].get('Store') == store_name:
+                                            product_price_dict[ean_code]['Price per Unit'] = unit_price
+                                            product_price_dict[ean_code]['Price per kg'] = kg_price
                                 else:
                                     product_price_dict[ean_code]['Price per Unit'] = unit_price
                                     product_price_dict[ean_code]['Price per kg'] = kg_price
@@ -657,6 +694,10 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
                             product_price_dict[ean_code]['Unit'] = unit_type
                             product_price_dict[ean_code]['Size (kg)'] = size
                             product_price_dict[ean_code]['Store'] = store_name
+
+                            if discount == 'Yes':
+                                if product_price_dict[ean_code].get('Discount valid until', 'Unknown') == 'Unknown':
+                                    product_urls.update({url: ean_code})
 
                         product_price_dict[ean_code].update(nutritional_content_dict[ean_code])
 
@@ -862,7 +903,6 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
             elapsed = time.perf_counter() - start0
             elapsed_time_text.text(f"Total time elapsed: {round(elapsed/60, 2)} minutes")
             url_progress_text.text(f"Scraping URL {url_counter + 1} of {total_urls}")
-            time.sleep(random.uniform(1, 2))
             if url:
                 try:
                     driver.get(url)
@@ -876,6 +916,7 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
                 print("Invalid URL, skipping")
                 url_counter += 1
                 url_progress_bar.progress(int((url_counter / total_urls) * 100))
+                time.sleep(random.uniform(1, 2))
                 continue
 
             try:
@@ -1057,6 +1098,7 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
                 nutritional_content_dict[ean_code]['Sydänmerkki'] = sydanmerkki if nutritional_content_dict[ean_code].get('Sydänmerkki', 'Unknown') == 'Unknown' or sydanmerkki == 'Yes' else nutritional_content_dict[ean_code]['Sydänmerkki']
                 nutritional_content_dict[ean_code]['Hyvää Suomesta'] = hyvaa_suomesta if nutritional_content_dict[ean_code].get('Hyvää Suomesta', 'Unknown') == 'Unknown' or hyvaa_suomesta == 'Yes' else nutritional_content_dict[ean_code]['Hyvää Suomesta']
                 product_price_dict[ean_code].update(nutritional_content_dict[ean_code])
+                time.sleep(random.uniform(1, 2))
             else:
                 nutritional_content_dict[ean_code] = {}
                 nutritional_content_dict[ean_code]['Name'] = product_name
@@ -1356,7 +1398,7 @@ if st.session_state.send_clicked:
             st.success(f"Chosen product categories: {', '.join([inverted_category_options[cat] for cat in selected_categories])}")
             st.success(f"Chosen stores: {', '.join(selected_stores)}")
 
-            updated_discounted_product_price_dict = run_scraper(selected_categories, selected_stores, nutritional_content_dict, product_price_dict, discounted_product_price_dict, store_locations_input,  st.session_state.driver, only_discounted_products)
+            updated_discounted_product_price_dict = run_scraper(selected_categories, selected_stores, nutritional_content_dict, product_price_dict, discounted_product_price_dict, store_locations_input, st.session_state.driver, only_discounted_products)
             _ = postprocess_and_save(updated_discounted_product_price_dict)
 
 
