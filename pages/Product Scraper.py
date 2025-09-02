@@ -363,21 +363,31 @@ def get_stores_list(search_string):
 
     user_agent = random.choice(user_agents)
 
-    options = uc.ChromeOptions()
-    options.binary_location = "/usr/bin/chromium"
-    options.add_argument(f'--user-agent={user_agent}')
-    options.add_argument("--headless=new")
-    options.add_argument("--start-maximized")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--disable-gpu")
-    options.add_argument("--remote-debugging-port=9222")
-
     service = get_webdriver_service(logpath=logpath)
 
     try:
+        options = uc.ChromeOptions()
+        options.binary_location = "/usr/bin/chromium"
+        options.add_argument(f'--user-agent={user_agent}')
+        options.add_argument("--headless=new")
+        options.add_argument("--start-maximized")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--disable-gpu")
+        options.add_argument("--remote-debugging-port=9222")
+
         driver = uc.Chrome(options=options, service=service)
     except Exception as e:
+        options = uc.ChromeOptions()
+        options.binary_location = "/usr/bin/chromium"
+        options.add_argument(f'--user-agent={user_agent}')
+        options.add_argument("--headless=new")
+        options.add_argument("--start-maximized")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--disable-gpu")
+        options.add_argument("--remote-debugging-port=9222")
+        
         main_version_string = re.search(r"Current browser version is (\d+\.\d+\.\d+)", str(e)).group(1)
         main_version = int(main_version_string.split(".")[0])
 
