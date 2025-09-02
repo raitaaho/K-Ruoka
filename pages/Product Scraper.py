@@ -398,6 +398,8 @@ def get_stores_list(search_string):
         number_of_stores = int(''.join(filter(str.isdigit, search_summary_string)))
     except TimeoutException:
         print("Store search summary element not found or not visible")
+        driver.save_screenshot('screenshot.png')
+        st.image("screenshot.png", caption="Screen")
         return []
 
     store_list_element = wait.until(EC.visibility_of_element_located((By.XPATH, "//ul[@data-component='store-list']")))
