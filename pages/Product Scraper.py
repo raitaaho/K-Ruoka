@@ -394,9 +394,12 @@ def get_stores_list(search_string):
         driver = uc.Chrome(options=options, service=service, version_main=main_version)
     driver.get(f"https://www.k-ruoka.fi/?kaupat&kauppahaku={search_string}")
     time.sleep(random.uniform(3, 4))
+    driver.save_screenshot('screenshot.png')
+    st.image("screenshot.png", caption="Screen")
 
     verify_element = driver.find_element(By.XPATH, "//*[contains(text(), 'Verify')]")
     driver.execute_script('arguments[0].click()', verify_element)
+    verify_element.send_keys(Keys.ENTER)
     time.sleep(random.uniform(4,6))
     st.write(verify_element.get_attribute("outerHTML"))
 
