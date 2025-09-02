@@ -393,7 +393,7 @@ def get_stores_list(search_string):
 
         driver = uc.Chrome(options=options, service=service, version_main=main_version)
     driver.get(f"https://www.k-ruoka.fi/?kaupat&kauppahaku={search_string}")
-    time.sleep(random.uniform(1, 2))
+    time.sleep(random.uniform(3, 4))
 
     verify_element = driver.find_element(By.XPATH, "//button")
     st.write(verify_element.get_attribute("outerHTML"))
