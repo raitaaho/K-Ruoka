@@ -395,7 +395,7 @@ def get_stores_list(search_string):
     driver.get(f"https://www.k-ruoka.fi/?kaupat&kauppahaku={search_string}")
     time.sleep(random.uniform(3, 4))
 
-    verify_element = driver.find_element(By.XPATH, "//button")
+    verify_element = driver.find_element(By.XPATH, "//div")
     st.write(verify_element.get_attribute("outerHTML"))
 
     wait = WebDriverWait(driver, 10)
