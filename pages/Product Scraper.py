@@ -23,6 +23,7 @@ import glob
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 import shutil
+import undetected_chromedriver as uc
 
 today = date.today()
 
@@ -362,7 +363,7 @@ def get_stores_list(search_string):
 
     user_agent = random.choice(user_agents)
 
-    options = Options()
+    options = uc.ChromeOptions()
     options.binary_location = "/usr/bin/chromium"
     options.add_argument(f'--user-agent={user_agent}')
     options.add_argument("--headless=new")
@@ -374,7 +375,7 @@ def get_stores_list(search_string):
 
     service = get_webdriver_service(logpath=logpath)
 
-    driver = webdriver.Chrome(options=options, service=service)
+    driver = uc.Chrome(options=options, service=service)
     driver.get(f"https://www.k-ruoka.fi/?kaupat&kauppahaku={search_string}")
     time.sleep(random.uniform(1, 2))
 
