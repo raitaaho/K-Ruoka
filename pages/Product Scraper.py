@@ -387,13 +387,16 @@ def get_stores_list(search_string):
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument("--disable-gpu")
         options.add_argument("--remote-debugging-port=9222")
-        
+
         main_version_string = re.search(r"Current browser version is (\d+\.\d+\.\d+)", str(e)).group(1)
         main_version = int(main_version_string.split(".")[0])
 
         driver = uc.Chrome(options=options, service=service, version_main=main_version)
     driver.get(f"https://www.k-ruoka.fi/?kaupat&kauppahaku={search_string}")
     time.sleep(random.uniform(1, 2))
+
+    verify_element = driver.find_element(By.XPATH, "//*[contains(text(), 'Verify')]")
+    st.write(verify_element.get_attribute("outerHTML"))
 
     wait = WebDriverWait(driver, 10)
     try:
