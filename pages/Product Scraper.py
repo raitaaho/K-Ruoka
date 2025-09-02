@@ -396,16 +396,6 @@ def get_stores_list(search_string):
     
     driver.get(f"https://www.k-ruoka.fi/?kaupat&kauppahaku={search_string}")
     time.sleep(random.uniform(8, 10))
-    driver.save_screenshot('screenshot.png')
-    st.image("screenshot.png", caption="Screen")
-
-    verify_element = driver.find_element(By.XPATH, "//*[contains(text(), 'Verify')]")
-    div_elem = driver.find_element(By.XPATH, "//div")
-    verify_element.click()
-    #driver.execute_script('arguments[0].click()', verify_element)
-    #div_elem.send_keys(Keys.ENTER)
-    time.sleep(random.uniform(4,6))
-    st.write(verify_element.get_attribute("outerHTML"))
 
     wait = WebDriverWait(driver, 10)
     try:
