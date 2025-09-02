@@ -395,7 +395,7 @@ def get_stores_list(search_string):
         driver = uc.Chrome(options=options, service=service, version_main=main_version)
 
     stealth(driver,
-        languages=["en-US", "en"],
+        languages=["fi"],
         vendor="Google Inc.",
         platform="Win32",
         webgl_vendor="Intel Inc.",
