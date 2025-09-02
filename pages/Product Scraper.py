@@ -24,6 +24,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 import shutil
 import undetected_chromedriver as uc
+from selenium_stealth import stealth
 
 today = date.today()
 
@@ -392,6 +393,16 @@ def get_stores_list(search_string):
         main_version = int(main_version_string.split(".")[0])
 
         driver = uc.Chrome(options=options, service=service, version_main=main_version)
+
+    stealth(driver,
+        languages=["en-US", "en"],
+        vendor="Google Inc.",
+        platform="Win32",
+        webgl_vendor="Intel Inc.",
+        renderer="Intel Iris OpenGL Engine",
+        fix_hairline=True,
+        )
+    
     driver.get(f"https://www.k-ruoka.fi/?kaupat&kauppahaku={search_string}")
     time.sleep(random.uniform(8, 10))
     driver.save_screenshot('screenshot.png')

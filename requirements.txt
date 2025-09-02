@@ -4,3 +4,4 @@ numpy
 streamlit
 openpyxl
 undetected-chromedriver
+selenium-stealth
