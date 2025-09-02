@@ -9,7 +9,6 @@ from selenium.common.exceptions import ElementClickInterceptedException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.actions.action_builder import ActionBuilder
 from selenium.webdriver.common.actions.mouse_button import MouseButton
-import undetected_chromedriver as uc
 import time
 import pandas as pd
 import numpy as np
@@ -21,6 +20,9 @@ import re
 import random
 import streamlit as st
 import glob
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+import shutil
 
 today = date.today()
 
@@ -336,6 +338,7 @@ def preprocess_and_save():
     return nutritional_content_dict, product_price_dict, discounted_product_price_dict
 
 def get_stores_list(search_string):
+    logpath=get_logpath()
     user_agents = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15",
@@ -359,12 +362,14 @@ def get_stores_list(search_string):
 
     user_agent = random.choice(user_agents)
 
-    options = uc.ChromeOptions()
+    options = Options()
     options.add_argument(f'--user-agent={user_agent}')
     options.add_argument("--headless")
     options.add_argument("--start-maximized")
 
-    driver = uc.Chrome(options=options)
+    service = get_webdriver_service(logpath=logpath)
+
+    driver = webdriver.Chrome(options=options, service=service)
     driver.get(f"https://www.k-ruoka.fi/?kaupat&kauppahaku={search_string}")
     time.sleep(random.uniform(1, 2))
 
@@ -1336,6 +1341,19 @@ def postprocess_and_save(discounted_product_price_dict):
 
     with pd.ExcelWriter(f"{file_name}") as writer:
         product_data_df.to_excel(writer, sheet_name='Products')
+
+def get_logpath() -> str:
+    return os.path.join(os.getcwd(), 'selenium.log')
+
+def get_chromedriver_path() -> str:
+    return shutil.which('chromedriver')
+
+def get_webdriver_service(logpath) -> Service:
+    service = Service(
+    executable_path=get_chromedriver_path(),
+    log_output=logpath,
+    )
+    return service
 
 st.set_page_config(page_title="K-Ruoka Web Scraper", page_icon="📈")
 
