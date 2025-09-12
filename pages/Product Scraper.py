@@ -9,7 +9,6 @@ from selenium.common.exceptions import ElementClickInterceptedException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.actions.action_builder import ActionBuilder
 from selenium.webdriver.common.actions.mouse_button import MouseButton
-import undetected_chromedriver as uc
 import time
 import pandas as pd
 import numpy as np
@@ -21,6 +20,11 @@ import re
 import random
 import streamlit as st
 import glob
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+import shutil
+import undetected_chromedriver as uc
+from selenium_stealth import stealth
 
 today = date.today()
 
@@ -336,6 +340,7 @@ def preprocess_and_save():
     return nutritional_content_dict, product_price_dict, discounted_product_price_dict
 
 def get_stores_list(search_string):
+    logpath=get_logpath()
     user_agents = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15",
@@ -359,14 +364,38 @@ def get_stores_list(search_string):
 
     user_agent = random.choice(user_agents)
 
-    options = uc.ChromeOptions()
-    options.add_argument(f'--user-agent={user_agent}')
-    options.add_argument("--headless")
-    options.add_argument("--start-maximized")
+    service = get_webdriver_service(logpath=logpath)
 
-    driver = uc.Chrome(options=options)
+    try:
+        options = uc.ChromeOptions()
+        options.binary_location = "/usr/bin/chromium"
+        options.add_argument(f'--user-agent={user_agent}')
+        options.add_argument("--headless=new")
+        options.add_argument("--start-maximized")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--disable-gpu")
+        options.add_argument("--remote-debugging-port=9222")
+
+        driver = uc.Chrome(options=options, service=service)
+    except Exception as e:
+        options = uc.ChromeOptions()
+        options.binary_location = "/usr/bin/chromium"
+        options.add_argument(f'--user-agent={user_agent}')
+        options.add_argument("--headless=new")
+        options.add_argument("--start-maximized")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--disable-gpu")
+        options.add_argument("--remote-debugging-port=9222")
+
+        main_version_string = re.search(r"Current browser version is (\d+\.\d+\.\d+)", str(e)).group(1)
+        main_version = int(main_version_string.split(".")[0])
+
+        driver = uc.Chrome(options=options, service=service, version_main=main_version)
+    
     driver.get(f"https://www.k-ruoka.fi/?kaupat&kauppahaku={search_string}")
-    time.sleep(random.uniform(1, 2))
+    time.sleep(random.uniform(8, 10))
 
     wait = WebDriverWait(driver, 10)
     try:
@@ -388,6 +417,8 @@ def get_stores_list(search_string):
         number_of_stores = int(''.join(filter(str.isdigit, search_summary_string)))
     except TimeoutException:
         print("Store search summary element not found or not visible")
+        driver.save_screenshot('screenshot.png')
+        st.image("screenshot.png", caption="Screen")
         return []
 
     store_list_element = wait.until(EC.visibility_of_element_located((By.XPATH, "//ul[@data-component='store-list']")))
@@ -1346,6 +1377,19 @@ def postprocess_and_save(discounted_product_price_dict):
 
     with pd.ExcelWriter(f"{file_name}") as writer:
         product_data_df.to_excel(writer, sheet_name='Products')
+
+def get_logpath() -> str:
+    return os.path.join(os.getcwd(), 'selenium.log')
+
+def get_chromedriver_path() -> str:
+    return shutil.which('chromedriver')
+
+def get_webdriver_service(logpath) -> Service:
+    service = Service(
+    executable_path=get_chromedriver_path(),
+    log_output=logpath,
+    )
+    return service
 
 st.set_page_config(page_title="K-Ruoka Web Scraper", page_icon="📈")
 
