@@ -470,7 +470,7 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
                 time.sleep(random.uniform(0, 1))
                 store_list_container.send_keys(Keys.PAGE_DOWN)
 
-                time.sleep(random.uniform(2, 3))
+                time.sleep(random.uniform(1, 2))
 
                 stores = driver.find_elements(By.XPATH, "//ul[@data-component='store-list']//li[@data-component='store-list-item']")
                 new_number_of_stores = len(stores)
@@ -489,7 +489,7 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
 
             time.sleep(random.uniform(1, 2))
             store.click()
-            time.sleep(random.uniform(4, 6))
+            time.sleep(random.uniform(3, 4))
 
             counter += 1
 
@@ -511,7 +511,7 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
 
             category_progress_text.text(f"Scraping category {category_counter+1} of {total_categories} - {inverted_category_options[product_category]}")
             driver.get(f"https://www.k-ruoka.fi/kauppa/tuotehaku/{product_category}")
-            time.sleep(random.uniform(1, 2))
+            time.sleep(random.uniform(0.5, 1))
             
             wait = WebDriverWait(driver, 20)
             try:
@@ -561,6 +561,18 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
             
             for card in product_cards:
                 product_progress_text.text(f"Scraping product card {product_counter+1} of {total_products}")
+                discount_badge_elements = card.find_elements(By.XPATH, ".//div[starts-with(@class, 'ProductCardDiscount__Text')]")
+                normal_price_elements = card.find_elements(By.XPATH, ".//div[@data-testid='product-normal-price']")
+                if len(discount_badge_elements) > 0 or len(normal_price_elements) > 0:
+                    discount = 'Yes'
+                else:
+                    discount = 'No'
+
+                if only_discounted_products is True and discount == 'No':
+                    product_counter += 1
+                    product_progress_bar.progress(int((product_counter / total_products) * 100))
+                    continue
+
                 url_elements = card.find_elements(By.XPATH, ".//a[@data-testid='product-link']")
                 if len(url_elements) > 0:
                     try:
@@ -577,66 +589,56 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
                             product_progress_bar.progress(int((product_counter / total_products) * 100))
                             continue
                         ean_code = ean_code_string[:hyphen_index] if hyphen_index != -1 else ean_code_string
-
-                        if only_discounted_products:
-                            discount = 'Yes'
-                        else:
-                            discount_badge_elements = card.find_elements(By.XPATH, ".//div[starts-with(@class, 'ProductCardDiscount__Text')]")
-                            normal_price_elements = card.find_elements(By.XPATH, ".//div[@data-testid='product-normal-price']")
-                            if len(discount_badge_elements) > 0 or len(normal_price_elements) > 0:
-                                discount = 'Yes'
-                            else:
-                                discount = 'No'
-                        
+                                
                     except Exception as e:
                         print("Could not get product url or EAN code for", card.text, e)
                         product_counter += 1
                         product_progress_bar.progress(int((product_counter / total_products) * 100))
                         continue
 
-                    if nutritional_content_dict.get(ean_code, 'Unknown') != 'Unknown':
-                        try:
-                            unit_price_string = card.find_element(By.XPATH, ".//div[@data-testid='product-unit-price']").text
-                            backslash_index = unit_price_string.find("/")
-                            if backslash_index != -1:
-                                unit_type = unit_price_string[backslash_index+1:]
-                                unit_price = unit_price_string[:backslash_index]
-                                unit_price = float(unit_price.replace(',', '.')) if len(unit_price) != 0 else 999.999
-                            else:
-                                search_res = re.search(r'(\d+(?:[.,]\d+)?)', unit_price_string)
-                                unit_price = float(search_res.group().replace(',', '.')) if search_res else 999.999
-                                unit_type = 'kg' if 'kg' in unit_price_string else 'Unknown'
-
-                            # Check if unit_price is suspiciously low
-                            if unit_price <= 0.2:
-                                raise ValueError("Unit price seems too low, fallback to alternative method")
-
-                        except (NoSuchElementException, ValueError):
-                            try:
-                                price_element_integer = card.find_element(By.XPATH, ".//div[starts-with(@class, 'ProductPrice__IntegerPart')]")
-                                unit_price_integer = price_element_integer.text
-
-                                price_element_decimal = card.find_element(By.XPATH, ".//div[starts-with(@class, 'ProductPrice__DecimalPart')]")
-                                unit_price_decimal = price_element_decimal.text
-
-                                unit_element = card.find_element(By.XPATH, ".//div[starts-with(@class, 'ProductPrice__Extra')]")
-                                unit_type = unit_element.text.replace('/', '')
-
-                                unit_price = float(unit_price_integer + '.' + unit_price_decimal) if len(unit_price_integer) > 0 and len(unit_price_decimal) > 0 else 999.999
-
-                            except Exception as e:
-                                print("Could not get product price for", product_name, e)
-                                unit_price = 999.999
-                                unit_type = 'Unknown'
-                                product_urls.update({url: ean_code})
-
-                        if unit_type == 'kpl':
-                            kg_price = unit_price / size if size != 'Unknown' and size != 0 else 999.999
-                        elif unit_type == 'kg' or unit_type == 'l':
-                            kg_price = unit_price
+                    try:
+                        unit_price_string = card.find_element(By.XPATH, ".//div[@data-testid='product-unit-price']").text
+                        backslash_index = unit_price_string.find("/")
+                        if backslash_index != -1:
+                            unit_type = unit_price_string[backslash_index+1:]
+                            unit_price = unit_price_string[:backslash_index]
+                            unit_price = float(unit_price.replace(',', '.')) if len(unit_price) != 0 else 999.999
                         else:
-                            kg_price = 999.999
+                            search_res = re.search(r'(\d+(?:[.,]\d+)?)', unit_price_string)
+                            unit_price = float(search_res.group().replace(',', '.')) if search_res else 999.999
+                            unit_type = 'kg' if 'kg' in unit_price_string else 'Unknown'
 
+                        # Check if unit_price is suspiciously low
+                        if unit_price <= 0.2:
+                            raise ValueError("Unit price seems too low, fallback to alternative method")
+
+                    except (NoSuchElementException, ValueError):
+                        try:
+                            price_element_integer = card.find_element(By.XPATH, ".//div[starts-with(@class, 'ProductPrice__IntegerPart')]")
+                            unit_price_integer = price_element_integer.text
+
+                            price_element_decimal = card.find_element(By.XPATH, ".//div[starts-with(@class, 'ProductPrice__DecimalPart')]")
+                            unit_price_decimal = price_element_decimal.text
+
+                            unit_element = card.find_element(By.XPATH, ".//div[starts-with(@class, 'ProductPrice__Extra')]")
+                            unit_type = unit_element.text.replace('/', '')
+
+                            unit_price = float(unit_price_integer + '.' + unit_price_decimal) if len(unit_price_integer) > 0 and len(unit_price_decimal) > 0 else 999.999
+
+                        except Exception as e:
+                            print("Could not get product price for", product_name, e)
+                            unit_price = 999.999
+                            unit_type = 'Unknown'
+                            product_urls.update({url: ean_code})
+
+                    if unit_type == 'kpl':
+                        kg_price = unit_price / size if size != 'Unknown' and size != 0 else 999.999
+                    elif unit_type == 'kg' or unit_type == 'l':
+                        kg_price = unit_price
+                    else:
+                        kg_price = 999.999
+
+                    if nutritional_content_dict.get(ean_code, 'Unknown') != 'Unknown':
                         if product_price_dict.get(ean_code, "Unknown") != "Unknown":
                             if discount == 'Yes':
                                 if product_price_dict[ean_code].get('Discount valid until', 'Unknown') == 'Unknown':
@@ -685,7 +687,6 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
                                     product_price_dict[ean_code]['Unit'] = unit_type
                                     product_price_dict[ean_code]['Size (kg)'] = size
                                     product_price_dict[ean_code]['Store'] = store_name
-                                    product_urls.update({url: ean_code})
 
                         else:
                             product_price_dict[ean_code] = {}
@@ -695,9 +696,7 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
                             product_price_dict[ean_code]['Size (kg)'] = size
                             product_price_dict[ean_code]['Store'] = store_name
 
-                            if discount == 'Yes':
-                                if product_price_dict[ean_code].get('Discount valid until', 'Unknown') == 'Unknown':
-                                    product_urls.update({url: ean_code})
+                            product_urls.update({url: ean_code})
 
                         product_price_dict[ean_code].update(nutritional_content_dict[ean_code])
 
@@ -705,6 +704,9 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
                         product_urls.update({url: ean_code})
                         product_price_dict[ean_code] = {}
                         product_price_dict[ean_code]['Name'] = product_name
+                        product_price_dict[ean_code]['Price per Unit'] = unit_price
+                        product_price_dict[ean_code]['Price per kg'] = kg_price
+                        product_price_dict[ean_code]['Unit'] = unit_type
                         product_price_dict[ean_code]['Size (kg)'] = size
                         product_price_dict[ean_code]['Store'] = store_name
 
@@ -883,7 +885,7 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
                             discounted_product_price_dict[ean_code] = product_price_dict[ean_code]
 
                     driver.find_element(By.XPATH, "//button[@title='Sulje']").click()
-                    time.sleep(random.uniform(2, 3))
+                    time.sleep(random.uniform(1, 2))
 
                 product_counter += 1
                 product_progress_bar.progress(int((product_counter / total_products) * 100))
@@ -906,7 +908,7 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
             if url:
                 try:
                     driver.get(url)
-                    time.sleep(random.uniform(1, 2))
+                    time.sleep(random.uniform(0.5, 1))
                 except Exception as e:
                     print("Could not open link")
                     url_counter += 1
@@ -916,7 +918,6 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
                 print("Invalid URL, skipping")
                 url_counter += 1
                 url_progress_bar.progress(int((url_counter / total_urls) * 100))
-                time.sleep(random.uniform(1, 2))
                 continue
 
             try:
@@ -940,7 +941,7 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
 
             if ean == 'Unknown' or ean == '':
                 try:
-                    wait = WebDriverWait(driver, 5)
+                    wait = WebDriverWait(driver, 3)
                     product_info_header = wait.until(EC.element_to_be_clickable((By.XPATH, "//h2[text()='Tuotetiedot']")))
                     product_info_header.click()
                     time.sleep(random.uniform(1, 2))
@@ -951,7 +952,7 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
                     continue
 
                 try:
-                    wait = WebDriverWait(driver, 5)
+                    wait = WebDriverWait(driver, 3)
                     ean_element = wait.until(EC.visibility_of_element_located((By.XPATH, "//h3[text()='EAN-koodi']//following-sibling::p")))
                     ean_code = ean_element.text
                     product_info_header.click()
@@ -964,37 +965,64 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
             else:
                 ean_code = ean
 
-            vegan = 'No'
-            gluten_free = 'No'
-            lactose_free = 'No'
-            sydanmerkki = 'No'
-            hyvaa_suomesta = 'No'
-            luomu = 'No'
+            if nutritional_content_dict.get(ean_code, 'Unknown') != 'Unknown':
+                vegan = nutritional_content_dict[ean_code].get('Vegan', 'Unknown')
+                gluten_free = nutritional_content_dict[ean_code].get('Gluten Free', 'Unknown')
+                lactose_free = nutritional_content_dict[ean_code].get('Lactose Free', 'Unknown')
+                sydanmerkki = nutritional_content_dict[ean_code].get('Sydänmerkki', 'Unknown')
+                hyvaa_suomesta = nutritional_content_dict[ean_code].get('Hyvää Suomesta', 'Unknown')
+                luomu = nutritional_content_dict[ean_code].get('Organic', 'Unknown')
 
-            try:
-                attribute_elements = driver.find_elements(By.XPATH, "//div[starts-with(@class, 'NutritionalAttributeHighlights__Symbol')]")
-                for attribute in attribute_elements:
-                    if attribute.text == 'V':
-                        vegan = 'Yes'
-                    elif attribute.text == 'G':
-                        gluten_free = 'Yes'
-                    elif attribute.text == 'L':
-                        lactose_free = 'Yes'
-                    elif attribute.text == 'LU':
-                        luomu = 'Yes'
-            except Exception as e:
-                print("Could not find nutritional attributes for", product_name, e)
-            
-            try:
-                responsibility_elements = driver.find_elements(By.XPATH, "//div[starts-with(@class, 'ResponsibilityHighlights__Container')]//img")
-                for responsibility in responsibility_elements:
-                    if responsibility.get_attribute("alt") == 'Sydänmerkki':
-                        sydanmerkki = 'Yes'
-                    elif responsibility.get_attribute("alt") == 'Hyvää Suomesta':
-                        hyvaa_suomesta = 'Yes'
-            except Exception as e:
-                print("Could not find responsibility attributes for", product_name, e)
-            
+            else:
+                vegan = 'Unknown'
+                gluten_free = 'Unknown'
+                lactose_free = 'Unknown'
+                sydanmerkki = 'Unknown'
+                hyvaa_suomesta = 'Unknown'
+                luomu = 'Unknown'
+
+            if any(attr == 'Unknown' for attr in [vegan, gluten_free, lactose_free, luomu]):
+                try:
+                    attribute_elements = driver.find_elements(By.XPATH, "//div[starts-with(@class, 'NutritionalAttributeHighlights__Symbol')]")
+                    for attribute in attribute_elements:
+                        if attribute.text == 'V':
+                            vegan = 'Yes'
+                        elif attribute.text == 'G':
+                            gluten_free = 'Yes'
+                        elif attribute.text == 'L':
+                            lactose_free = 'Yes'
+                        elif attribute.text == 'LU':
+                            luomu = 'Yes'
+                except Exception as e:
+                    print("Could not find nutritional attributes for", product_name, e)
+            if sydanmerkki == 'Unknown' or hyvaa_suomesta == 'Unknown':
+                try:
+                    responsibility_elements = driver.find_elements(By.XPATH, "//div[starts-with(@class, 'ResponsibilityHighlights__Container')]//img")
+                    for responsibility in responsibility_elements:
+                        if responsibility.get_attribute("alt") == 'Sydänmerkki':
+                            sydanmerkki = 'Yes'
+                        elif responsibility.get_attribute("alt") == 'Hyvää Suomesta':
+                            hyvaa_suomesta = 'Yes'
+                except Exception as e:
+                    print("Could not find responsibility attributes for", product_name, e)
+
+            valid_during_elements = driver.find_elements(By.XPATH, "//h1[@data-testid='product-name']//following::div[starts-with(@class, 'ProductSidebarContent__Info') and contains(translate(text(), 'VOIMASSA', 'voimassa'), 'voimassa')]")
+            if len(valid_during_elements) > 0:
+                discount = 'Yes'
+                valid_during_string = valid_during_elements[0].text
+                
+                search_res = re.findall(r'(\d{1,2})\.(\d{1,2})(?:\.(\d{4}))?', valid_during_string)
+                valid_starting_string = '.'.join([part for part in search_res[0] if part])
+                valid_until_string = '.'.join([part for part in search_res[1] if part])
+
+                valid_starting = valid_starting_string if len(valid_starting_string.split('.')) == 3 else valid_starting_string + '.' + str(today.year) if len(valid_starting_string.split('.')) == 2 else 'Unknown'
+
+                valid_until = valid_until_string if len(valid_until_string.split('.')) == 3 else valid_until_string + '.' + str(today.year) if len(valid_until_string.split('.')) == 2 else 'Unknown'
+            else:
+                discount = 'No'
+                valid_starting = None
+                valid_until = None
+
             try:
                 wait = WebDriverWait(driver, 3)
                 price_element = wait.until(EC.visibility_of_element_located((By.XPATH, "//h1[@data-testid='product-name']//following-sibling::div//div[@data-testid='product-unit-price']")))
@@ -1035,29 +1063,12 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
             else:
                 kg_price = 999.999
 
-            valid_during_elements = driver.find_elements(By.XPATH, "//h1[@data-testid='product-name']//following::div[starts-with(@class, 'ProductSidebarContent__Info') and contains(translate(text(), 'VOIMASSA', 'voimassa'), 'voimassa')]")
-            if len(valid_during_elements) > 0:
-                discount = 'Yes'
-                valid_during_string = valid_during_elements[0].text
-                
-                search_res = re.findall(r'(\d{1,2})\.(\d{1,2})(?:\.(\d{4}))?', valid_during_string)
-                valid_starting_string = '.'.join([part for part in search_res[0] if part])
-                valid_until_string = '.'.join([part for part in search_res[1] if part])
-
-                valid_starting = valid_starting_string if len(valid_starting_string.split('.')) == 3 else valid_starting_string + '.' + str(today.year) if len(valid_starting_string.split('.')) == 2 else 'Unknown'
-
-                valid_until = valid_until_string if len(valid_until_string.split('.')) == 3 else valid_until_string + '.' + str(today.year) if len(valid_until_string.split('.')) == 2 else 'Unknown'
-            
-            else:
-                discount = 'No'
-                valid_starting = None
-                valid_until = None
-
             if product_price_dict.get(ean_code, 'Unknown') != 'Unknown':
                 if product_price_dict[ean_code].get('Store', 'Unknown') == store_name:
                     product_price_dict[ean_code]['Price per Unit'] = unit_price
                     product_price_dict[ean_code]['Price per kg'] = kg_price
                     product_price_dict[ean_code]['Unit'] = unit_type
+                    product_price_dict[ean_code]['Size (kg)'] = size
                 
                 else:
                     if product_price_dict[ean_code].get('Price per Unit', 'Unknown') != 'Unknown':
@@ -1098,7 +1109,7 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
                 nutritional_content_dict[ean_code]['Sydänmerkki'] = sydanmerkki if nutritional_content_dict[ean_code].get('Sydänmerkki', 'Unknown') == 'Unknown' or sydanmerkki == 'Yes' else nutritional_content_dict[ean_code]['Sydänmerkki']
                 nutritional_content_dict[ean_code]['Hyvää Suomesta'] = hyvaa_suomesta if nutritional_content_dict[ean_code].get('Hyvää Suomesta', 'Unknown') == 'Unknown' or hyvaa_suomesta == 'Yes' else nutritional_content_dict[ean_code]['Hyvää Suomesta']
                 product_price_dict[ean_code].update(nutritional_content_dict[ean_code])
-                time.sleep(random.uniform(1, 2))
+    
             else:
                 nutritional_content_dict[ean_code] = {}
                 nutritional_content_dict[ean_code]['Name'] = product_name
@@ -1119,7 +1130,6 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
                     wait = WebDriverWait(driver, 3)
                     nutritional_content_header = wait.until(EC.element_to_be_clickable((By.XPATH, "//h2[text()='Ravintosisältö']")))
                     nutritional_content_header.click()
-                    time.sleep(random.uniform(1, 2))
                 except ElementClickInterceptedException:
                     nutritional_content_header = driver.find_element(By.XPATH, "//h2[text()='Ravintosisältö']")
                     driver.execute_script("arguments[0].scrollIntoView()", nutritional_content_header)
