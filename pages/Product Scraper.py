@@ -24,7 +24,6 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 import shutil
 import undetected_chromedriver as uc
-from selenium_stealth import stealth
 
 today = date.today()
 
@@ -67,12 +66,13 @@ inverted_category_options = {
 }
 
 
-milligram_pattern = re.compile(r'(\d+(?:[.,]\d+)?)\s*mg')
-gram_pattern = re.compile(r'(\d+(?:[.,]\d+)?)\s*g')
-kilogram_pattern = re.compile(r'(\d+(?:[.,]\d+)?)\s*kg')
-milliliter_pattern = re.compile(r'(\d+(?:[.,]\d+)?)\s*ml')
-deciliter_pattern = re.compile(r'(\d+(?:[.,]\d+)?)\s*dl')
-liter_pattern = re.compile(r'(\d+(?:[.,]\d+)?)\s*l')
+milligram_pattern = re.compile(r'(\d+(?:[.,]\d+)?)\s*mg', re.IGNORECASE)
+gram_pattern = re.compile(r'(\d+(?:[.,]\d+)?)\s*g', re.IGNORECASE)
+kilogram_pattern = re.compile(r'(\d+(?:[.,]\d+)?)\s*kg', re.IGNORECASE)
+milliliter_pattern = re.compile(r'(\d+(?:[.,]\d+)?)\s*ml', re.IGNORECASE)
+centiliter_pattern = re.compile(r'(\d+(?:[.,]\d+)?)\s*cl', re.IGNORECASE)
+deciliter_pattern = re.compile(r'(\d+(?:[.,]\d+)?)\s*dl', re.IGNORECASE)
+liter_pattern = re.compile(r'(\d+(?:[.,]\d+)?)\s*l', re.IGNORECASE)
 
 def extract_size_in_g(size_string):
     string = size_string.replace(',', '.')
@@ -83,6 +83,7 @@ def extract_size_in_g(size_string):
         (kilogram_pattern, 1000),
         (deciliter_pattern, 100),
         (milliliter_pattern, 1),
+        (centiliter_pattern, 10),
         (liter_pattern, 1000),
     ]:
         matches = pattern.findall(string)
@@ -107,6 +108,7 @@ def extract_size_in_kg(size_string):
         (kilogram_pattern, 1),
         (deciliter_pattern, float(1/10)),
         (milliliter_pattern, float(1/1000)),
+        (centiliter_pattern, float(1/100)),
         (liter_pattern, 1),
     ]:
         matches = pattern.findall(string)
@@ -132,6 +134,8 @@ def extract_portion_size(nutritional_header_string):
         return f"{kilogram_match.group(1)} kg"
     if milliliter_match := milliliter_pattern.search(string):
         return f"{milliliter_match.group(1)} ml"
+    if centiliter_match := centiliter_pattern.search(string):
+        return f"{centiliter_match.group(1)} cl"
     if deciliter_match := deciliter_pattern.search(string):
         return f"{deciliter_match.group(1)} dl"
     if liter_match := liter_pattern.search(string):
@@ -364,36 +368,22 @@ def get_stores_list(search_string):
 
     user_agent = random.choice(user_agents)
 
+    options = uc.ChromeOptions()
+
+    #options = Options()
+    #options.binary_location = "/usr/bin/chromium"
+    options.add_argument(f'--user-agent={user_agent}')
+    options.add_argument("--headless=new")
+    options.add_argument("--start-maximized")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--remote-debugging-port=9222")
+
     service = get_webdriver_service(logpath=logpath)
 
-    try:
-        options = uc.ChromeOptions()
-        options.binary_location = "/usr/bin/chromium"
-        options.add_argument(f'--user-agent={user_agent}')
-        options.add_argument("--headless=new")
-        options.add_argument("--start-maximized")
-        options.add_argument("--no-sandbox")
-        options.add_argument("--disable-dev-shm-usage")
-        options.add_argument("--disable-gpu")
-        options.add_argument("--remote-debugging-port=9222")
+    driver = uc.Chrome(options=options)
 
-        driver = uc.Chrome(options=options, service=service)
-    except Exception as e:
-        options = uc.ChromeOptions()
-        options.binary_location = "/usr/bin/chromium"
-        options.add_argument(f'--user-agent={user_agent}')
-        options.add_argument("--headless=new")
-        options.add_argument("--start-maximized")
-        options.add_argument("--no-sandbox")
-        options.add_argument("--disable-dev-shm-usage")
-        options.add_argument("--disable-gpu")
-        options.add_argument("--remote-debugging-port=9222")
-
-        main_version_string = re.search(r"Current browser version is (\d+\.\d+\.\d+)", str(e)).group(1)
-        main_version = int(main_version_string.split(".")[0])
-
-        driver = uc.Chrome(options=options, service=service, version_main=main_version)
-    
     driver.get(f"https://www.k-ruoka.fi/?kaupat&kauppahaku={search_string}")
     time.sleep(random.uniform(8, 10))
 
@@ -415,7 +405,7 @@ def get_stores_list(search_string):
             print("No stores found in the specified locations")
             return[]
         number_of_stores = int(''.join(filter(str.isdigit, search_summary_string)))
-    except TimeoutException:
+    except Exception as e:
         print("Store search summary element not found or not visible")
         driver.save_screenshot('screenshot.png')
         st.image("screenshot.png", caption="Screen")
@@ -433,7 +423,7 @@ def get_stores_list(search_string):
         time.sleep(random.uniform(0, 1))
         store_list_container.send_keys(Keys.PAGE_DOWN)
 
-        time.sleep(random.uniform(2, 3))
+        time.sleep(random.uniform(2, 4))
 
         stores = driver.find_elements(By.XPATH, "//ul[@data-component='store-list']//li[@data-component='store-list-item']")
         new_number_of_stores = len(stores)
@@ -501,7 +491,7 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
                 time.sleep(random.uniform(0, 1))
                 store_list_container.send_keys(Keys.PAGE_DOWN)
 
-                time.sleep(random.uniform(1, 2))
+                time.sleep(random.uniform(2, 4))
 
                 stores = driver.find_elements(By.XPATH, "//ul[@data-component='store-list']//li[@data-component='store-list-item']")
                 new_number_of_stores = len(stores)
@@ -542,7 +532,7 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
 
             category_progress_text.text(f"Scraping category {category_counter+1} of {total_categories} - {inverted_category_options[product_category]}")
             driver.get(f"https://www.k-ruoka.fi/kauppa/tuotehaku/{product_category}")
-            time.sleep(random.uniform(0.5, 1))
+            time.sleep(random.uniform(2, 4))
             
             wait = WebDriverWait(driver, 20)
             try:
@@ -553,7 +543,7 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
                     elapsed = time.perf_counter() - start0
                     elapsed_time_text.text(f"Total time elapsed: {round(elapsed/60, 2)} minutes")
                     driver.execute_script("arguments[0].scrollIntoView()", product_cards[-1])
-                    time.sleep(random.uniform(2, 3))
+                    time.sleep(random.uniform(3, 5))
                     product_cards = driver.find_elements(By.XPATH, "//ul[@data-testid='product-search-results']//li[@data-testid='product-card']")
                     new_list_len = len(product_cards)
                     if new_list_len != last_list_len:
@@ -939,7 +929,7 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
             if url:
                 try:
                     driver.get(url)
-                    time.sleep(random.uniform(0.5, 1))
+                    time.sleep(random.uniform(1, 3))
                 except Exception as e:
                     print("Could not open link")
                     url_counter += 1
@@ -1013,6 +1003,10 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
                 luomu = 'Unknown'
 
             if any(attr == 'Unknown' for attr in [vegan, gluten_free, lactose_free, luomu]):
+                vegan = 'No'
+                gluten_free = 'No'
+                lactose_free = 'No'
+                luomu = 'No'
                 try:
                     attribute_elements = driver.find_elements(By.XPATH, "//div[starts-with(@class, 'NutritionalAttributeHighlights__Symbol')]")
                     for attribute in attribute_elements:
@@ -1026,7 +1020,10 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
                             luomu = 'Yes'
                 except Exception as e:
                     print("Could not find nutritional attributes for", product_name, e)
+                
             if sydanmerkki == 'Unknown' or hyvaa_suomesta == 'Unknown':
+                sydanmerkki = 'No'
+                hyvaa_suomesta = 'No'
                 try:
                     responsibility_elements = driver.find_elements(By.XPATH, "//div[starts-with(@class, 'ResponsibilityHighlights__Container')]//img")
                     for responsibility in responsibility_elements:
