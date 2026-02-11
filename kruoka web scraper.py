@@ -721,9 +721,11 @@ def run_scraper(selected_categories, store_locations):
                 header = wait.until(EC.visibility_of_element_located((By.XPATH, "//h1[@data-testid='product-name']")))
                 product_name = header.text
                 size = extract_size_in_kg(product_name)
-                category_elements = driver.find_elements(By.XPATH, "//li[starts-with(@class, 'Breadcrumbs__BreadcrumbsItem')]")
-                if len(category_elements) > 1:
+                category_elements = driver.find_elements(By.XPATH, "//li[starts-with(@class, 'Breadcrumbs__Item')]")
+                if len(category_elements) > 2:
                     category = category_elements[len(category_elements) - 2].text
+                elif len(category_elements) == 2:
+                    category = category_elements[-1].text
                 elif len(category_elements) == 1:
                     category = category_elements[0].text
                 else:
