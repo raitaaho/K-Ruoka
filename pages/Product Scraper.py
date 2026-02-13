@@ -286,6 +286,14 @@ def preprocess_and_save():
     try:
         with open('nutritional_content_data.json', 'r') as file:
             nutritional_content_dict = json.load(file)
+
+            for ean, details in nutritional_content_dict.items():
+                if "" in details:
+                    nutritional_content_dict.pop(ean)
+
+        nutritional_content_json = json.dumps(nutritional_content_dict, indent=4)
+        with open("nutritional_content_data.json", "w") as outfile:
+            outfile.write(nutritional_content_json)
     except IOError:
         print("Could not open nutritional content data file. Using empty dictionary.")
         nutritional_content_dict = {}
@@ -373,7 +381,7 @@ def get_stores_list(search_string):
     #options = Options()
     #options.binary_location = "/usr/bin/chromium"
     options.add_argument(f'--user-agent={user_agent}')
-    options.add_argument("--headless=new")
+    #options.add_argument("--headless")
     options.add_argument("--start-maximized")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
@@ -717,7 +725,8 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
                             product_price_dict[ean_code]['Size (kg)'] = size
                             product_price_dict[ean_code]['Store'] = store_name
 
-                            product_urls.update({url: ean_code})
+                            if discount == 'Yes':
+                                product_urls.update({url: ean_code})
 
                         product_price_dict[ean_code].update(nutritional_content_dict[ean_code])
 
@@ -929,7 +938,9 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
             if url:
                 try:
                     driver.get(url)
-                    time.sleep(random.uniform(1, 3))
+                    time.sleep(random.uniform(2, 3))
+                    driver.execute_script("document.body.style.zoom='50%'")
+                    time.sleep(random.uniform(0.5, 1.0))
                 except Exception as e:
                     print("Could not open link")
                     url_counter += 1
@@ -946,11 +957,11 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
                 header = wait.until(EC.visibility_of_element_located((By.XPATH, "//h1[@data-testid='product-name']")))
                 product_name = header.text
                 size = extract_size_in_kg(product_name)
-                category_elements = driver.find_elements(By.XPATH, "//li[starts-with(@class, 'Breadcrumbs__BreadcrumbsItem')]")
-                if len(category_elements) > 1:
+                category_elements = driver.find_elements(By.XPATH, "//li[starts-with(@class, 'Breadcrumbs__Item')]")
+                if len(category_elements) > 2:
                     category = category_elements[len(category_elements) - 2].text
-                elif len(category_elements) == 1:
-                    category = category_elements[0].text
+                elif len(category_elements) == 1 or len(category_elements) == 2:
+                    category = category_elements[-1].text
                 else:
                     print('Unknown category for', ean, product_name)
                     category = 'Unknown'
@@ -1158,6 +1169,7 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
                     wait = WebDriverWait(driver, 3)
                     nutritional_content_header = wait.until(EC.element_to_be_clickable((By.XPATH, "//h2[text()='Ravintosisältö']")))
                     nutritional_content_header.click()
+                    time.sleep(random.uniform(1, 2))
                 except ElementClickInterceptedException:
                     nutritional_content_header = driver.find_element(By.XPATH, "//h2[text()='Ravintosisältö']")
                     driver.execute_script("arguments[0].scrollIntoView()", nutritional_content_header)
