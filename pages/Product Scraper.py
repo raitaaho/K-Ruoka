@@ -287,8 +287,9 @@ def preprocess_and_save():
         with open('nutritional_content_data.json', 'r') as file:
             nutritional_content_dict = json.load(file)
 
-            for ean, details in nutritional_content_dict.items():
-                if "" in details:
+            for ean in list(nutritional_content_dict.keys()):
+                details = nutritional_content_dict[ean]
+                if "" in details.keys():
                     nutritional_content_dict.pop(ean)
 
         nutritional_content_json = json.dumps(nutritional_content_dict, indent=4)
