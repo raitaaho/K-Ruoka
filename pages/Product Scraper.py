@@ -939,9 +939,7 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
             if url:
                 try:
                     driver.get(url)
-                    time.sleep(random.uniform(2, 3))
-                    driver.execute_script("document.body.style.zoom='50%'")
-                    time.sleep(random.uniform(0.5, 1.0))
+                    time.sleep(random.uniform(2, 3)) 
                 except Exception as e:
                     print("Could not open link")
                     url_counter += 1
@@ -1166,6 +1164,8 @@ def run_scraper(selected_categories, selected_stores, nutritional_content_dict, 
                     nutritional_content_dict[ean_code]['Kofeiini (per 100ml)'] = caffeine_content
                     nutritional_content_dict[ean_code]['Kofeiini (per tuote)'] = caffeine_amount
 
+                driver.execute_script("document.body.style.zoom='50%'")
+                time.sleep(random.uniform(0.5, 1.0))
                 try:
                     wait = WebDriverWait(driver, 3)
                     nutritional_content_header = wait.until(EC.element_to_be_clickable((By.XPATH, "//h2[text()='Ravintosisältö']")))
